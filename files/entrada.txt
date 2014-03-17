@@ -1,0 +1,25 @@
+/*ignorando os comment*/
+
+//namespace aasas {using b = uow;};
+//namespace a { using b = uow; namespace a { using b = uow; }; };
+
+using b = uow;
+[ assembly : a]
+[ assembly : a (new array [this] [] {})]
+[assembly : a (new decimal { this })]
+[ assembly : a (new array [this] [] {} (asasas))]
+[assembly : a (unchecked (this))]
+[assembly : a (1-1)]
+[ assembly : a (new array [this] [] {}), atribut( 1- 1)]
+namespace a { using b = uow; namespace a { using b = uow; }; };
+namespace a { using b = uow; namespace a { using b = uow; }; };
+[a,b,c,d] public enum ab {[a,b] cd = this}
+[a,b] new delegate void asasa ();
+[a,b] new delegate void asasa ([a,s,d] ref asa asas);
+[a,b] new delegate void asasa ([a,s,d] ref asa asas, [a,s,d] ref asa asas, [a,s,d] params FLOAT asas);
+[a,b,c,d] public enum ab {[a,b] cd = this}
+[r] new interface inter : dfg, grd {};
+[r] new interface inter : dfg, grd {[a] new void aisjai([a,s,d] params FLOAT asas);};
+[r] new interface inter : dfg, grd {[f] new integer sdsd {[a,s] get; [s] set;}};
+[r] new interface inter : dfg, grd {[sd,sds,sd] new event string sdsd;};
+[r, g] new interface inter : dfg, grd {[sd,sds,sd] new string this [[a,s,d] params FLOAT asas] {[a,s] get; [s] set;}};

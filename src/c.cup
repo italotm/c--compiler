@@ -1,0 +1,233 @@
+import java_cup.runtime.*;
+
+/*Este codigo foi reusado. Ele serve para nos mostrar aonde ocorreu um erro, ao ler um arquivo de entrada.*/
+parser code {:
+    
+    public void report_error(String message, Object info) {
+   
+        StringBuffer m = new StringBuffer("Error");
+   
+        if (info instanceof java_cup.runtime.Symbol) {
+            java_cup.runtime.Symbol s = ((java_cup.runtime.Symbol) info);
+            if (s.left >= 0) {
+                /* Add to the end of the StringBuffer error message
+                   the line number of the error in the input. */
+                m.append(" in line "+(s.left+1));   
+                /* Check if the column number in the input is greater
+                   or equal to zero. */
+                if (s.right >= 0)                    
+                    /* Add to the end of the StringBuffer error message
+                       the column number of the error in the input. */
+                    m.append(", column "+(s.right+1));
+            }
+        }
+   
+	
+        m.append(" : "+message);
+        System.err.println(m);
+    }
+
+    public void report_fatal_error(String message, Object info) {
+        report_error(message, info);
+        System.exit(1);
+    }
+:};
+
+/*Aqui estao listado todos os simbolos terminais da nossa gramatica*/
+terminal LPAREN, RPAREN, MENOS, MAIS, BARRA, ASTERISCO, ABSTRACT, AS, BASE, 
+BOOL, BREAK, BYTE, CASE, CATCH, CHAR, CHECKED, CLASS, CONST, CONTINUE, DECIMAL,
+ DEFAULT, DELEGATE, DO, DOUBLE, ELSE, ENUM, EVENT, EXPLICIT, EXTERN, FALSE, FINALLY, FIXED, FLOAT, FOR, 
+ FOREACH, GOTO, IF, IMPLICIT, IN, INT, INTERFACE, INTERNAL, IS, LOCK, LONG, NAMESPACE, NEW, NULL, OBJECT, 
+ OPERATOR, OUT, OVERRIDE, PARAMS, PRIVATE, PROTECTED, PUBLIC, READONLY, REF, RETURN, SBYTE, SEALED,
+ SHORT, SIZEOF, STACKALLOC, STATIC, STRING, STRUCT, SWITCH, THIS, THROW, TRUE, TRY, TYPEOF, UINT, 
+ ULONG, UNCHECKED, UNSAFE, USHORT, USING, VIRTUAL, VOID, VOLATILE, WHILE, BOOLEAN, LETRA, LCHAVE, RCHAVE, LCOLCHETE, RCOLCHETE,
+ PONTO, VIRGULA, DOISPONTOS,PONTOEVIRGULA,PERCENT, ECOMERCIAL,PIPE,CIRCUNFLEXO,EXCLAMACAO,TIO,IGUAL,MENOR,MAIOR,INTERROGACAO,INCREMENTO,
+ DECREMENTO,ECOMERCIALDUPLO,ORPIPE, MENORMENOR,MAIORMAIOR,IGUALIGUAL,DIFERENTE,MENORIGUAL,MAIORIGUAL,MAISIGUAL,MENOSIGUAL,VEZESIGUAL,DIVIDEIGUAL,
+ PERCENTIGUAL, ECOMERCIALIGUAL, PIPEIGUAL, TIOIGUAL, MENORMENORIGUAL,MAIORMAIORIGUAL,PONTEIRO, IDENT, DEFINE, UNDEF, CERQUILHA, WHITESPACE, INTEGERTYPESUFFIX,
+ INTEGERLITERAL, IDENTARROBA, CHARLITERAL, ASSEMBLY, REALLITERAL, STRINGLITERAL, FIELD, METHOD, MODULE, PARAM, PROPERTY, TYPE, GET, SET;
+
+/*Aqui estao todos os simbolos nao terminais da gramatica*/
+non terminal compilation_unit, identifier, qualified_identifier, using_directive, global_attributes, global_attribute_section, attribute_list ,attribute, atribute_name, attribute_arguments ,expression_list, expression_equality_operator, expression_relational_operator, expression_shift_operator, assignment_operator, expression_unary_operator, unary_expression,virgula_recursion_aux ,virgula_optional ,rank_specifier, rank_specifier_optional, rank_specifier_recursion_optional, variable_initializer, variable_initializer_recursion, array_initializer, array_initializer_optional, integral_type, ral, integer_literal, real_literal, character_literal, string_literal, null_literal, literal, predefined_type, argument_list,argument_recursion_optional, argument, ref_or_out, increment_decrement, type, type_or_void, primary_expression, expression, built_in_class_type, built_in_type, non_array_type, array_type, boolean_literal,
+namespace_member_declaration_aux, namespace_member_declaration, namespace_declaration, namespace_body, using_directive_aux,
+attributes, attribute_section_aux, attribute_section, attribute_target_aux, attribute_target,
+enum_declaration, enum_modifier_aux, integral_type_aux, enum_body, enum_modifier, enum_member_declaration_aux, enum_member_declaration,
+shift_reduce_global_atributes_namespace_member, using_directive_recursion, global_attribute_section_aux,
+type_declaration, delegate_declaration, delegate_modifier, delegate_modifier_aux, formal_parameter_list,
+fixed_parameters, fixed_parameter_aux, fixed_parameter, parameter_modifier, parameter_array, formal_parameter_list_aux,
+interface_declaration, interface_modifier, qualified_indetifier_list, qualified_indetifier_list_aux,
+ponto_virgula_opt, interface_body, interface_member_declaration_aux, interface_member_declaration,
+interface_method_declaration, new_opt, interface_property_declaration, interface_accessors, interface_event_declaration, interface_indexer_declaration;
+
+/*Aqui estao as regras de producao*/
+
+start with compilation_unit;
+
+compilation_unit ::= using_directive_recursion shift_reduce_global_atributes_namespace_member;
+shift_reduce_global_atributes_namespace_member ::= global_attributes namespace_member_declaration_aux | global_attributes | namespace_member_declaration_aux;
+using_directive_recursion ::= | using_directive | using_directive using_directive_recursion;
+identifier ::= IDENT | IDENTARROBA;
+qualified_identifier ::= identifier | identifier PONTO qualified_identifier;
+using_directive ::= | USING qualified_identifier PONTOEVIRGULA | USING identifier IGUAL qualified_identifier PONTOEVIRGULA;    
+
+/*NAMESPACE*/
+namespace_member_declaration_aux ::= | namespace_member_declaration | namespace_member_declaration namespace_member_declaration_aux;
+namespace_member_declaration ::= namespace_declaration | type_declaration;
+namespace_declaration ::=  NAMESPACE qualified_identifier namespace_body PONTOEVIRGULA;
+namespace_body ::= LCHAVE using_directive namespace_member_declaration_aux RCHAVE;
+
+type_declaration ::= interface_declaration | enum_declaration | delegate_declaration;
+/* GLOBAL ATRIBUTES*/
+
+global_attributes::= global_attribute_section_aux;
+global_attribute_section_aux ::= | global_attribute_section | global_attribute_section global_attribute_section_aux;
+global_attribute_section::= LCOLCHETE ASSEMBLY DOISPONTOS attribute_list RCOLCHETE;
+attribute_list ::= attribute | attribute VIRGULA attribute_list;
+attribute ::= atribute_name |atribute_name attribute_arguments;
+atribute_name ::= qualified_identifier;
+attribute_arguments ::= LPAREN RPAREN | LPAREN expression_list RPAREN;
+expression_list ::= expression | expression VIRGULA expression_list;
+
+expression_equality_operator::= IGUALIGUAL | DIFERENTE;
+
+expression_relational_operator::= MENOR | MAIOR | MENORIGUAL | MAIORIGUAL | IS | AS;
+
+expression_shift_operator::= MENORMENOR | MAIORMAIOR;
+
+assignment_operator::= IGUAL | MAISIGUAL | MENOSIGUAL | VEZESIGUAL | DIVIDEIGUAL | PERCENTIGUAL | ECOMERCIALIGUAL | PIPEIGUAL | TIOIGUAL | MENORMENORIGUAL | MAIORMAIORIGUAL;
+
+expression_unary_operator ::= MAIS | MENOS | DECREMENTO | INCREMENTO | EXCLAMACAO | TIO | ASTERISCO;
+    
+unary_expression::= expression_unary_operator unary_expression | LPAREN type RPAREN unary_expression | primary_expression;
+
+virgula_recursion_aux ::= | VIRGULA | VIRGULA virgula_recursion_aux;
+virgula_optional ::= | VIRGULA; 
+rank_specifier ::= LCOLCHETE virgula_recursion_aux RCOLCHETE;
+rank_specifier_optional ::= | rank_specifier;
+rank_specifier_recursion_optional ::= | rank_specifier | rank_specifier rank_specifier_recursion_optional;
+
+variable_initializer ::= expression | array_initializer;
+variable_initializer_recursion ::= variable_initializer | variable_initializer VIRGULA variable_initializer_recursion; 
+array_initializer::= LCHAVE RCHAVE | LCHAVE variable_initializer_recursion virgula_optional RCHAVE;
+array_initializer_optional ::= | array_initializer;
+
+integral_type::= SBYTE | BYTE|SHORT | USHORT |INT |UINT |LONG |ULONG | CHAR;
+
+built_in_class_type ::= OBJECT | STRING;
+
+built_in_type::= integral_type | built_in_class_type | BOOL | DECIMAL | FLOAT | DOUBLE;
+
+non_array_type::= qualified_identifier | built_in_type; 
+
+array_type ::= non_array_type | rank_specifier_optional;
+
+boolean_literal ::= TRUE | FALSE;
+integer_literal ::= INTEGERLITERAL;
+real_literal ::=  REALLITERAL;
+character_literal ::=  CHARLITERAL;
+string_literal ::=  STRINGLITERAL;
+null_literal ::= NULL;
+literal::= boolean_literal | integer_literal | real_literal | character_literal |string_literal | null_literal;
+predefined_type ::= BOOL |BYTE |CHAR |DECIMAL |DOUBLE | FLOAT | INT | LONG | OBJECT | SBYTE | SHORT | STRING | UINT | ULONG |USHORT;
+
+argument_list::= argument_recursion_optional;
+argument_recursion_optional ::= | argument | argument argument_recursion_optional;
+argument::= expression | ref_or_out expression; 
+
+ref_or_out::= REF | OUT;
+increment_decrement ::= INCREMENTO | DECREMENTO;
+type ::= non_array_type rank_specifier_recursion_optional;
+
+type_or_void::= type | VOID;
+
+primary_expression ::= 
+    NEW non_array_type LCOLCHETE expression_list RCOLCHETE rank_specifier_recursion_optional array_initializer_optional |
+    NEW array_type array_initializer |
+    literal |
+    identifier|
+    LPAREN expression RPAREN |
+    primary_expression PONTO identifier |
+    predefined_type PONTO identifier |
+    primary_expression LPAREN argument_list RPAREN |
+    primary_expression LCOLCHETE expression_list RCOLCHETE |
+    THIS |
+    BASE PONTO identifier |
+    BASE LCOLCHETE expression_list RCOLCHETE |
+    primary_expression increment_decrement |
+    NEW type LPAREN argument_list RPAREN |
+    TYPEOF LPAREN type_or_void RPAREN |
+    CHECKED LPAREN expression RPAREN |
+    UNCHECKED LPAREN expression RPAREN;
+
+
+
+
+expression ::= 
+ 	expression INTERROGACAO expression DOISPONTOS expression |
+    expression ORPIPE expression | 
+    expression ECOMERCIALDUPLO expression |
+    expression CIRCUNFLEXO expression |
+    expression IS built_in_type |
+    expression ASTERISCO expression |
+    expression BARRA expression |
+    expression PERCENT expression |  
+    expression PIPE expression |
+    expression ECOMERCIAL expression |
+    expression expression_equality_operator expression |
+    expression expression_relational_operator expression |
+    expression expression_shift_operator expression |
+    expression MAIS expression |
+    expression MENOS expression |
+    unary_expression |
+    unary_expression assignment_operator expression ;
+
+/*enum*/
+enum_declaration ::= attributes enum_modifier_aux ENUM identifier integral_type_aux enum_body PONTOEVIRGULA |
+					attributes enum_modifier_aux ENUM identifier integral_type_aux enum_body;
+enum_modifier_aux ::= | enum_modifier | enum_modifier enum_modifier_aux;
+enum_modifier ::= NEW|PUBLIC|PROTECTED|INTERNAL|PRIVATE;
+integral_type_aux ::= | DOISPONTOS integral_type;
+enum_body ::= LCHAVE RCHAVE | LCHAVE enum_member_declaration_aux RCHAVE;
+enum_member_declaration_aux ::=  enum_member_declaration | enum_member_declaration VIRGULA enum_member_declaration_aux;
+enum_member_declaration ::= attributes identifier IGUAL expression | attributes identifier;
+
+/*ATTRIBUTES*/
+attributes ::= attribute_section_aux;
+attribute_section_aux ::= | attribute_section | attribute_section attribute_section_aux;
+attribute_section ::= LCOLCHETE attribute_target_aux attribute_list RCOLCHETE;
+attribute_target_aux ::= | attribute_target DOISPONTOS;
+attribute_target ::= FIELD|EVENT|METHOD|MODULE|PARAM|PROPERTY|RETURN|TYPE;
+
+/*delegate*/
+delegate_declaration ::= attributes delegate_modifier_aux DELEGATE type_or_void identifier LPAREN formal_parameter_list_aux RPAREN PONTOEVIRGULA;
+delegate_modifier_aux ::= | delegate_modifier | delegate_modifier delegate_modifier_aux;
+delegate_modifier ::= NEW | PUBLIC | PROTECTED | INTERNAL | PRIVATE;
+
+formal_parameter_list_aux ::= | formal_parameter_list;
+formal_parameter_list ::= fixed_parameters | parameter_array;
+fixed_parameters ::= fixed_parameter_aux;
+fixed_parameter_aux ::= fixed_parameter | fixed_parameter VIRGULA parameter_array | fixed_parameter VIRGULA fixed_parameter_aux;
+fixed_parameter ::= attributes parameter_modifier type identifier;
+parameter_modifier ::= | REF | OUT;
+parameter_array ::= attributes PARAMS array_type identifier;
+
+/*interface*/
+interface_declaration ::= attributes interface_modifier INTERFACE identifier qualified_indetifier_list_aux;
+interface_modifier ::= | NEW | PUBLIC | PROTECTED | INTERNAL | PRIVATE;
+
+qualified_indetifier_list_aux ::= | DOISPONTOS qualified_indetifier_list interface_body ponto_virgula_opt;
+qualified_indetifier_list ::= qualified_identifier | qualified_identifier VIRGULA qualified_indetifier_list;
+ponto_virgula_opt ::= | PONTOEVIRGULA;
+
+interface_body ::= LCHAVE interface_member_declaration_aux RCHAVE;
+interface_member_declaration_aux ::= | interface_member_declaration interface_member_declaration_aux;
+interface_member_declaration ::= interface_method_declaration | interface_property_declaration | interface_event_declaration | interface_indexer_declaration;
+
+interface_method_declaration ::= attributes new_opt type_or_void identifier LPAREN formal_parameter_list_aux RPAREN PONTOEVIRGULA;
+new_opt ::= | NEW;
+
+interface_property_declaration ::= attributes new_opt type identifier LCHAVE interface_accessors RCHAVE; 
+interface_accessors ::= attributes GET PONTOEVIRGULA | attributes GET PONTOEVIRGULA attributes SET PONTOEVIRGULA | attributes SET PONTOEVIRGULA | attributes SET PONTOEVIRGULA attributes GET PONTOEVIRGULA;
+
+interface_event_declaration ::= attributes new_opt EVENT type identifier PONTOEVIRGULA;
+
+interface_indexer_declaration ::= attributes new_opt type THIS LCOLCHETE formal_parameter_list RCOLCHETE LCHAVE interface_accessors RCHAVE;
