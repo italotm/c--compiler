@@ -64,7 +64,11 @@ maybe_empty_block, statement_aux, statement, labeled_statement, declaration_stat
 local_constant_declaration, constant_declarator_aux, constant_declarator, embedded_statement, statement_expression,
 selection_statement, if_statement, else_part_opt, else_part, switch_statement, switch_section_aux, switch_section,
 statement_mais, switch_label_aux, switch_label, iteration_statement, while_statement, do_statement, for_statement,
-for_initializer, expression_opt, statement_expression_list_opt, statement_expression_list, foreach_statement;
+for_initializer, expression_opt, statement_expression_list_opt, statement_expression_list, foreach_statement,
+jump_statement, break_statement, continue_statement, goto_statement, return_statement, throw_statement,
+try_statement, catch_clauses, finally_clause, finally_clause_opt, block, specific_catch_clause_mais, specific_catch_clause,
+general_catch_clause_opt, general_catch_clause, specific_catch_clause_aux, identifier_opt, lock_statement,
+using_statement, resource_acquisition;
 
 /*Aqui estao as regras de producao*/
 
@@ -270,7 +274,7 @@ local_constant_declaration ::= CONST type constant_declarator_aux;
 constant_declarator_aux ::= constant_declarator | constant_declarator constant_declarator_aux;
 constant_declarator ::= identifier IGUAL expression;
 
-embedded_statement ::= maybe_empty_block | statement_expression PONTOEVIRGULA | selection_statement | iteration_statement;
+embedded_statement ::= maybe_empty_block | statement_expression PONTOEVIRGULA | selection_statement | iteration_statement | jump_statement | try_statement | CHECKED block | UNCHECKED block | lock_statement | using_statement;
 statement_expression ::=  primary_expression LPAREN argument_list RPAREN | NEW type LPAREN argument_list RPAREN | unary_expression assignment_operator expression | primary_expression increment_decrement | increment_decrement primary_expression;
 selection_statement ::= if_statement | switch_statement;
 if_statement ::= IF LPAREN expression RPAREN embedded_statement else_part_opt;
@@ -290,5 +294,24 @@ for_initializer ::= | local_variable_declaration | statement_expression_list;
 expression_opt ::= | expression;
 statement_expression_list_opt ::= | statement_expression_list;
 statement_expression_list ::= statement_expression | statement_expression statement_expression_list;
-
 foreach_statement ::= FOREACH LPAREN type identifier IN expression RPAREN embedded_statement;
+jump_statement ::= break_statement | continue_statement | goto_statement | return_statement | throw_statement;
+break_statement ::= BREAK PONTOEVIRGULA;
+continue_statement ::= CONTINUE PONTOEVIRGULA;
+goto_statement ::= GOTO identifier PONTOEVIRGULA | GOTO CASE expression PONTOEVIRGULA | GOTO DEFAULT PONTOEVIRGULA;
+return_statement ::= RETURN expression_opt PONTOEVIRGULA;
+throw_statement ::= THROW expression_opt PONTOEVIRGULA;  
+try_statement ::= TRY block catch_clauses finally_clause_opt | TRY block finally_clause;
+finally_clause_opt ::= | finally_clause;
+block ::= LCHAVE statement_aux RCHAVE;
+catch_clauses ::=  specific_catch_clause_mais general_catch_clause_opt | specific_catch_clause_aux general_catch_clause;
+specific_catch_clause_mais ::= specific_catch_clause | specific_catch_clause specific_catch_clause_mais;
+specific_catch_clause_aux ::= | specific_catch_clause specific_catch_clause_aux;
+general_catch_clause_opt ::= | general_catch_clause;
+specific_catch_clause ::= CATCH LPAREN built_in_class_type identifier_opt RPAREN block | CATCH LPAREN qualified_identifier identifier_opt RPAREN block;
+identifier_opt ::= | identifier;
+general_catch_clause ::= CATCH block;
+finally_clause ::= FINALLY block;
+lock_statement ::= LOCK LPAREN expression RPAREN embedded_statement;
+using_statement ::= USING LPAREN resource_acquisition RPAREN embedded_statement;
+resource_acquisition ::=  local_variable_declaration | expression;
