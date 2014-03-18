@@ -22,4 +22,26 @@ namespace a { using b = uow; namespace a { using b = uow; }; };
 [r] new interface inter : dfg, grd {[a] new void aisjai([a,s,d] params FLOAT asas);};
 [r] new interface inter : dfg, grd {[f] new integer sdsd {[a,s] get; [s] set;}};
 [r] new interface inter : dfg, grd {[sd,sds,sd] new event string sdsd;};
-[r, g] new interface inter : dfg, grd {[sd,sds,sd] new string this [[a,s,d] params FLOAT asas] {[a,s] get; [s] set;}};
+[r, g] public interface inter : dfg, grd {[sd,sds,sd] new string this [[a,s,d] params FLOAT asas] {[a,s] get; [s] set;}};
+
+[asas, asas] public struct strutura {}
+[asas, asas] public struct strutura : ds,fd {};
+[asas, asas] public struct strutura : ds,fd {[asas] internal const integer a,f,g;};
+[asas, asas] public struct strutura {[a,f] volatile string asas = this;};
+[asas, asas] public struct strutura {[w] sealed void su ([a,s,d] params FLOAT asas);};
+[asas, asas] public struct strutura {[w] sealed void su ();};
+[asas, asas] public struct strutura {[w] sealed void su ([a,s,d] params FLOAT asas){}};
+[asas, asas] public struct strutura {[w] sealed void su ([a,s,d] params FLOAT asas){asas : const string casa = this;}};
+
+[asas, asas] public struct strutura {[w] sealed void su ([a,s,d] params FLOAT asas){base.asas(boo || boo);}};
+[asas, asas] public struct strutura {[w] sealed void su ([a,s,d] params FLOAT asas){new test(boo || boo);}};
+[asas, asas] public struct strutura {[w] sealed void su ([a,s,d] params FLOAT asas){i++;}};
+[asas, asas] public struct strutura {[w] sealed void su ([a,s,d] params FLOAT asas){;}};
+[asas, asas] public struct strutura {[w] sealed void su ([a,s,d] params FLOAT asas){if (a || b){}}};
+[asas, asas] public struct strutura {[w] sealed void su ([a,s,d] params FLOAT asas){if (a || b){}else{int a = 3;}}};
+[asas, asas] public struct strutura {[w] sealed void su ([a,s,d] params FLOAT asas){if (a || b){switch (num){case 3: int a = 2; case 1: int b = 7; default: string c = massa;}}else{int a = 3;}}};
+[asas, asas] public struct strutura {[w] sealed void su ([a,s,d] params FLOAT asas){if (a || b){while(i<0){i++;}}}};
+[asas, asas] public struct strutura {[w] sealed void su ([a,s,d] params FLOAT asas){while(a || b){b=3;}}};
+[asas, asas] public struct strutura {[w] sealed void su ([a,s,d] params FLOAT asas){do{a=6;}while(a || b);}};
+[asas, asas] public struct strutura {[w] sealed void su ([a,s,d] params FLOAT asas){for (int i = 0; i < 10; i++){}}};
+[asas, asas] public struct strutura {[w] sealed void su ([a,s,d] params FLOAT asas){foreach (string list in lista){a=6;}}};

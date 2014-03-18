@@ -56,7 +56,15 @@ type_declaration, delegate_declaration, delegate_modifier, delegate_modifier_aux
 fixed_parameters, fixed_parameter_aux, fixed_parameter, parameter_modifier, parameter_array, formal_parameter_list_aux,
 interface_declaration, interface_modifier, qualified_indetifier_list, qualified_indetifier_list_aux,
 ponto_virgula_opt, interface_body, interface_member_declaration_aux, interface_member_declaration,
-interface_method_declaration, new_opt, interface_property_declaration, interface_accessors, interface_event_declaration, interface_indexer_declaration;
+interface_method_declaration, new_opt, interface_property_declaration, interface_accessors, interface_event_declaration, interface_indexer_declaration,
+struct_declaration, struct_modifier, qualified_identifier_list_aux, qualified_identifier_list, struct_body,
+struct_member_declaration_aux, struct_member_declaration, constant_declaration, constant_modifier, field_declaration,
+field_modifier, variable_declarator_aux, variable_declarator, method_declaration, method_header, method_modifier,
+maybe_empty_block, statement_aux, statement, labeled_statement, declaration_statement, local_variable_declaration,
+local_constant_declaration, constant_declarator_aux, constant_declarator, embedded_statement, statement_expression,
+selection_statement, if_statement, else_part_opt, else_part, switch_statement, switch_section_aux, switch_section,
+statement_mais, switch_label_aux, switch_label, iteration_statement, while_statement, do_statement, for_statement,
+for_initializer, expression_opt, statement_expression_list_opt, statement_expression_list, foreach_statement;
 
 /*Aqui estao as regras de producao*/
 
@@ -75,7 +83,7 @@ namespace_member_declaration ::= namespace_declaration | type_declaration;
 namespace_declaration ::=  NAMESPACE qualified_identifier namespace_body PONTOEVIRGULA;
 namespace_body ::= LCHAVE using_directive namespace_member_declaration_aux RCHAVE;
 
-type_declaration ::= interface_declaration | enum_declaration | delegate_declaration;
+type_declaration ::= struct_declaration | interface_declaration | enum_declaration | delegate_declaration;
 /* GLOBAL ATRIBUTES*/
 
 global_attributes::= global_attribute_section_aux;
@@ -231,3 +239,56 @@ interface_accessors ::= attributes GET PONTOEVIRGULA | attributes GET PONTOEVIRG
 interface_event_declaration ::= attributes new_opt EVENT type identifier PONTOEVIRGULA;
 
 interface_indexer_declaration ::= attributes new_opt type THIS LCOLCHETE formal_parameter_list RCOLCHETE LCHAVE interface_accessors RCHAVE;
+
+/*struct*/
+struct_declaration ::= attributes struct_modifier STRUCT identifier qualified_identifier_list_aux struct_body ponto_virgula_opt;
+struct_modifier ::= | NEW | PUBLIC | PROTECTED | INTERNAL | PRIVATE;
+qualified_identifier_list_aux ::= | DOISPONTOS qualified_identifier_list;
+qualified_identifier_list ::= qualified_identifier | qualified_identifier VIRGULA qualified_identifier_list;
+struct_body ::= LCHAVE struct_member_declaration_aux RCHAVE;
+struct_member_declaration_aux ::= | struct_member_declaration struct_member_declaration_aux;
+
+struct_member_declaration ::= constant_declaration | field_declaration | method_declaration;
+constant_declaration ::= attributes constant_modifier CONST type qualified_identifier_list PONTOEVIRGULA;
+constant_modifier ::= | NEW | PUBLIC | PROTECTED | INTERNAL | PRIVATE;
+field_declaration ::= attributes field_modifier type variable_declarator_aux PONTOEVIRGULA;
+field_modifier ::= | NEW | PUBLIC | PROTECTED | INTERNAL | PRIVATE | STATIC | READONLY | VOLATILE;
+variable_declarator_aux ::= variable_declarator | variable_declarator variable_declarator_aux;
+variable_declarator ::= identifier | identifier IGUAL variable_initializer;
+
+
+method_declaration ::= method_header maybe_empty_block;
+method_header ::= attributes method_modifier type_or_void qualified_identifier LPAREN formal_parameter_list_aux RPAREN;
+method_modifier ::= | NEW | PUBLIC | PROTECTED | INTERNAL | PRIVATE | STATIC | VIRTUAL | SEALED | OVERRIDE | ABSTRACT | EXTERN;
+maybe_empty_block ::= LCHAVE statement_aux RCHAVE | PONTOEVIRGULA;
+statement_aux ::= | statement statement_aux;
+statement ::= labeled_statement | declaration_statement | embedded_statement;
+labeled_statement ::= identifier DOISPONTOS statement;
+declaration_statement ::=  local_variable_declaration PONTOEVIRGULA |  local_constant_declaration PONTOEVIRGULA;
+local_variable_declaration ::= type variable_declarator_aux;
+local_constant_declaration ::= CONST type constant_declarator_aux;
+constant_declarator_aux ::= constant_declarator | constant_declarator constant_declarator_aux;
+constant_declarator ::= identifier IGUAL expression;
+
+embedded_statement ::= maybe_empty_block | statement_expression PONTOEVIRGULA | selection_statement | iteration_statement;
+statement_expression ::=  primary_expression LPAREN argument_list RPAREN | NEW type LPAREN argument_list RPAREN | unary_expression assignment_operator expression | primary_expression increment_decrement | increment_decrement primary_expression;
+selection_statement ::= if_statement | switch_statement;
+if_statement ::= IF LPAREN expression RPAREN embedded_statement else_part_opt;
+else_part_opt ::= | else_part;
+else_part ::= ELSE embedded_statement;
+switch_statement ::= SWITCH LPAREN expression RPAREN LCHAVE switch_section_aux RCHAVE;
+switch_section_aux ::= | switch_section switch_section_aux;
+switch_section ::= switch_label_aux statement_mais;
+switch_label_aux ::= switch_label | switch_label switch_label_aux;
+statement_mais ::= statement | statement statement_mais;
+switch_label ::= CASE expression DOISPONTOS | DEFAULT DOISPONTOS;
+iteration_statement ::= while_statement| do_statement | for_statement | foreach_statement;
+while_statement ::= WHILE LPAREN expression RPAREN embedded_statement;
+do_statement ::= DO embedded_statement WHILE LPAREN expression RPAREN PONTOEVIRGULA;
+for_statement ::= FOR LPAREN for_initializer PONTOEVIRGULA expression_opt PONTOEVIRGULA statement_expression_list_opt RPAREN embedded_statement;
+for_initializer ::= | local_variable_declaration | statement_expression_list;
+expression_opt ::= | expression;
+statement_expression_list_opt ::= | statement_expression_list;
+statement_expression_list ::= statement_expression | statement_expression statement_expression_list;
+
+foreach_statement ::= FOREACH LPAREN type identifier IN expression RPAREN embedded_statement;
