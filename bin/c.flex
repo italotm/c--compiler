@@ -130,6 +130,8 @@ string_literal = \"([^\\\"]|\\.)*\" | @\"([^\\\"]|\\.)*\"
 	"while" { return symbol(sym.WHILE); }
 	"get" { return symbol(sym.GET); }
 	"set" { return symbol(sym.SET); }
+	"add" { return symbol(sym.ADD); }
+	"remove" { return symbol(sym.REMOVE); }
 	
 	"{"					{ return symbol(sym.LCHAVE); }
     "}"					{ return symbol(sym.RCHAVE); }

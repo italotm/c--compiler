@@ -44,7 +44,7 @@ BOOL, BREAK, BYTE, CASE, CATCH, CHAR, CHECKED, CLASS, CONST, CONTINUE, DECIMAL,
  PONTO, VIRGULA, DOISPONTOS,PONTOEVIRGULA,PERCENT, ECOMERCIAL,PIPE,CIRCUNFLEXO,EXCLAMACAO,TIO,IGUAL,MENOR,MAIOR,INTERROGACAO,INCREMENTO,
  DECREMENTO,ECOMERCIALDUPLO,ORPIPE, MENORMENOR,MAIORMAIOR,IGUALIGUAL,DIFERENTE,MENORIGUAL,MAIORIGUAL,MAISIGUAL,MENOSIGUAL,VEZESIGUAL,DIVIDEIGUAL,
  PERCENTIGUAL, ECOMERCIALIGUAL, PIPEIGUAL, TIOIGUAL, MENORMENORIGUAL,MAIORMAIORIGUAL,PONTEIRO, IDENT, DEFINE, UNDEF, CERQUILHA, WHITESPACE, INTEGERTYPESUFFIX,
- INTEGERLITERAL, IDENTARROBA, CHARLITERAL, ASSEMBLY, REALLITERAL, STRINGLITERAL, FIELD, METHOD, MODULE, PARAM, PROPERTY, TYPE, GET, SET;
+ INTEGERLITERAL, IDENTARROBA, CHARLITERAL, ASSEMBLY, REALLITERAL, STRINGLITERAL, FIELD, METHOD, MODULE, PARAM, PROPERTY, TYPE, GET, SET, ADD, REMOVE;
 
 /*Aqui estao todos os simbolos nao terminais da gramatica*/
 non terminal compilation_unit, identifier, qualified_identifier, using_directive, global_attributes, global_attribute_section, attribute_list ,attribute, atribute_name, attribute_arguments ,expression_list, expression_equality_operator, expression_relational_operator, expression_shift_operator, assignment_operator, expression_unary_operator, unary_expression,virgula_recursion_aux ,virgula_optional ,rank_specifier, rank_specifier_optional, rank_specifier_recursion_optional, variable_initializer, variable_initializer_recursion, array_initializer, array_initializer_optional, integral_type, ral, integer_literal, real_literal, character_literal, string_literal, null_literal, literal, predefined_type, argument_list,argument_recursion_optional, argument, ref_or_out, increment_decrement, type, type_or_void, primary_expression, expression, built_in_class_type, built_in_type, non_array_type, array_type, boolean_literal,
@@ -68,7 +68,10 @@ for_initializer, expression_opt, statement_expression_list_opt, statement_expres
 jump_statement, break_statement, continue_statement, goto_statement, return_statement, throw_statement,
 try_statement, catch_clauses, finally_clause, finally_clause_opt, block, specific_catch_clause_mais, specific_catch_clause,
 general_catch_clause_opt, general_catch_clause, specific_catch_clause_aux, identifier_opt, lock_statement,
-using_statement, resource_acquisition;
+using_statement, resource_acquisition, property_declaration, property_modifier, accessor_declarations, set_accessor_declaration_opt,
+get_accessor_declaration_opt, get_accessor_declaration, set_accessor_declaration, event_declaration, event_modifier,
+event_accessor_declarations, add_accessor_declaration, remove_accessor_declaration, class_declaration, class_base_opt,
+class_modifier, class_base, qualified_identifier_list_opt, class_body, class_member_declaration_aux, class_member_declaration;
 
 /*Aqui estao as regras de producao*/
 
@@ -87,7 +90,7 @@ namespace_member_declaration ::= namespace_declaration | type_declaration;
 namespace_declaration ::=  NAMESPACE qualified_identifier namespace_body PONTOEVIRGULA;
 namespace_body ::= LCHAVE using_directive namespace_member_declaration_aux RCHAVE;
 
-type_declaration ::= struct_declaration | interface_declaration | enum_declaration | delegate_declaration;
+type_declaration ::= class_declaration | struct_declaration | interface_declaration | enum_declaration | delegate_declaration;
 /* GLOBAL ATRIBUTES*/
 
 global_attributes::= global_attribute_section_aux;
@@ -253,7 +256,7 @@ struct_body ::= LCHAVE struct_member_declaration_aux RCHAVE;
 struct_member_declaration_aux ::= | struct_member_declaration struct_member_declaration_aux;
 
 struct_member_declaration ::= constant_declaration | field_declaration | method_declaration;
-constant_declaration ::= attributes constant_modifier CONST type qualified_identifier_list PONTOEVIRGULA;
+constant_declaration ::= attributes constant_modifier CONST type constant_declarator_aux PONTOEVIRGULA;
 constant_modifier ::= | NEW | PUBLIC | PROTECTED | INTERNAL | PRIVATE;
 field_declaration ::= attributes field_modifier type variable_declarator_aux PONTOEVIRGULA;
 field_modifier ::= | NEW | PUBLIC | PROTECTED | INTERNAL | PRIVATE | STATIC | READONLY | VOLATILE;
@@ -262,7 +265,7 @@ variable_declarator ::= identifier | identifier IGUAL variable_initializer;
 
 
 method_declaration ::= method_header maybe_empty_block;
-method_header ::= attributes method_modifier type_or_void qualified_identifier LPAREN formal_parameter_list_aux RPAREN;
+method_header ::= method_modifier type_or_void qualified_identifier LPAREN formal_parameter_list_aux RPAREN;
 method_modifier ::= | NEW | PUBLIC | PROTECTED | INTERNAL | PRIVATE | STATIC | VIRTUAL | SEALED | OVERRIDE | ABSTRACT | EXTERN;
 maybe_empty_block ::= LCHAVE statement_aux RCHAVE | PONTOEVIRGULA;
 statement_aux ::= | statement statement_aux;
@@ -273,7 +276,6 @@ local_variable_declaration ::= type variable_declarator_aux;
 local_constant_declaration ::= CONST type constant_declarator_aux;
 constant_declarator_aux ::= constant_declarator | constant_declarator constant_declarator_aux;
 constant_declarator ::= identifier IGUAL expression;
-
 embedded_statement ::= maybe_empty_block | statement_expression PONTOEVIRGULA | selection_statement | iteration_statement | jump_statement | try_statement | CHECKED block | UNCHECKED block | lock_statement | using_statement;
 statement_expression ::=  primary_expression LPAREN argument_list RPAREN | NEW type LPAREN argument_list RPAREN | unary_expression assignment_operator expression | primary_expression increment_decrement | increment_decrement primary_expression;
 selection_statement ::= if_statement | switch_statement;
@@ -315,3 +317,32 @@ finally_clause ::= FINALLY block;
 lock_statement ::= LOCK LPAREN expression RPAREN embedded_statement;
 using_statement ::= USING LPAREN resource_acquisition RPAREN embedded_statement;
 resource_acquisition ::=  local_variable_declaration | expression;
+
+/*n chama*/
+property_declaration ::= attributes property_modifier type qualified_identifier LCHAVE accessor_declarations RCHAVE;
+property_modifier ::= | NEW | PUBLIC | PROTECTED | INTERNAL | PRIVATE | STATIC | VIRTUAL | SEALED | OVERRIDE | ABSTRACT | EXTERN;
+
+accessor_declarations ::= get_accessor_declaration set_accessor_declaration_opt | set_accessor_declaration get_accessor_declaration_opt;
+set_accessor_declaration_opt ::= | set_accessor_declaration;
+get_accessor_declaration_opt ::= | get_accessor_declaration;
+get_accessor_declaration ::= attributes GET maybe_empty_block;
+set_accessor_declaration ::= attributes SET maybe_empty_block;
+
+/*n chama*/
+event_declaration ::= attributes event_modifier EVENT type variable_declarator_aux PONTOEVIRGULA | attributes event_modifier EVENT type qualified_identifier LCHAVE event_accessor_declarations RCHAVE;
+event_modifier ::= | NEW | PUBLIC | PROTECTED | INTERNAL | PRIVATE | STATIC | VIRTUAL | SEALED | OVERRIDE | ABSTRACT | EXTERN;
+event_accessor_declarations ::= add_accessor_declaration remove_accessor_declaration | remove_accessor_declaration add_accessor_declaration;
+add_accessor_declaration ::= attributes ADD block;
+remove_accessor_declaration ::= attributes REMOVE block;
+
+
+/*class*/
+class_declaration ::= attributes class_modifier CLASS identifier class_base_opt class_body ponto_virgula_opt;
+class_base_opt ::= | class_base;
+class_modifier ::= | NEW | PUBLIC | PROTECTED | INTERNAL | PRIVATE | ABSTRACT | SEALED;
+class_base ::= DOISPONTOS qualified_identifier_list | DOISPONTOS built_in_class_type qualified_identifier_list_opt;
+qualified_identifier_list_opt ::= | VIRGULA qualified_identifier_list;
+class_body ::= LCHAVE class_member_declaration_aux RCHAVE;
+
+class_member_declaration_aux ::= | class_member_declaration class_member_declaration_aux;
+class_member_declaration ::= method_declaration;
