@@ -24,11 +24,11 @@ namespace a { using b = uow; namespace a { using b = uow; }; };
 [r] new interface inter : dfg, grd {[sd,sds,sd] new event string sdsd;};
 [r, g] public interface inter : dfg, grd {[sd,sds,sd] new string this [[a,s,d] params FLOAT asas] {[a,s] get; [s] set;}};
 
-/*[asas, asas] public struct strutura {}
+[asas, asas] public struct strutura {}
 [asas, asas] public struct strutura : ds,fd {};
-[asas, asas] public struct strutura : ds,fd {[asas] internal const integer a,f,g;};
-[asas, asas] public struct strutura {[a,f] volatile string asas = this;};
-[asas, asas] public struct strutura {sealed void su ([a,s,d] params FLOAT asas);};
+[asas, asas] public struct strutura : ds,fd {public const string casa = this;};
+[asas, asas] public struct strutura { volatile string asas = this;};
+[asas, asas] public struct strutura { sealed void su ([a,s,d] params FLOAT asas);};
 [asas, asas] public struct strutura { sealed void su ();};
 [asas, asas] public struct strutura { sealed void su ([a,s,d] params FLOAT asas){}};
 [asas, asas] public struct strutura { sealed void su ([a,s,d] params FLOAT asas){asas : const string casa = this;}};
@@ -59,7 +59,8 @@ namespace a { using b = uow; namespace a { using b = uow; }; };
 [asas, asas] public struct strutura { sealed void su ([a,s,d] params FLOAT asas){checked{}}};
 [asas, asas] public struct strutura { protected void su ([a,s,d] params FLOAT asas){unchecked{}}};
 [asas, asas] public struct strutura { sealed void su ([a,s,d] params FLOAT asas){lock(a || b)goto asas;}};
-[asas, asas] public struct strutura { public void su ([a,s,d] params FLOAT asas){using(string c = teste)try{}catch(string){a=5;}finally{}}};*/
+[asas, asas] public struct strutura { public public asas su ([a,s,d] params FLOAT asas){using(string c = teste)try{}catch(string){a=5;}finally{}}};
 
-
-[a,d] public class classe {public void met(){}}
+[asas, asas] public struct strutura { internal void teste();};
+//[asas, asas] public struct strutura { internal event string teste{add{}remove{}}};
+[a,d] public class classe {public void met();}

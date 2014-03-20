@@ -1,0 +1,38 @@
+using System; 
+
+namespace EnumApplication { 
+	
+	class Box { 
+		public double length; // Length of a box 
+		public double breadth; // Breadth of a box 
+		public double height; // Height of a box 
+	}
+	
+	class EnumProgram { 
+	
+		enum Days { Sun, Mon, tue, Wed, thu, Fri, Sat }; 
+		
+		public int duplica(int num){
+			return num*2;
+		}
+			
+		static void Main(string[] args) { 
+			int num = duplica(5);
+			
+			if (num < 10){
+				num++;
+			}else{
+				num--;
+			}
+			
+			while (boo) {
+				while (boo2){
+					if (a = b) {
+						a = 3;
+					}
+				}
+			}
+		 }
+		
+	}
+}
