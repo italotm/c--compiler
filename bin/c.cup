@@ -72,7 +72,8 @@ using_statement, resource_acquisition, property_declaration, property_modifier, 
 get_accessor_declaration_opt, get_accessor_declaration, set_accessor_declaration, event_declaration, event_modifier,
 event_accessor_declarations, add_accessor_declaration, remove_accessor_declaration, class_declaration, class_base_opt,
 class_modifier, class_base, qualified_identifier_list_opt, class_body, class_member_declaration_aux, class_member_declaration,
-general_modifier, general_init, general_init_met_prop, modifier;
+general_modifier, general_init, general_init_met_prop, modifier, constructor_declaration, constructor_declarator,
+constructor_initializer_opt, constructor_initializer;
 
 /*Aqui estao as regras de producao*/
 
@@ -350,4 +351,9 @@ qualified_identifier_list_opt ::= | VIRGULA qualified_identifier_list;
 class_body ::= LCHAVE class_member_declaration_aux RCHAVE;
 
 class_member_declaration_aux ::= | class_member_declaration class_member_declaration_aux;
-class_member_declaration ::= constant_declaration | field_declaration | method_declaration | type_declaration;
+class_member_declaration ::= constant_declaration | field_declaration | method_declaration | type_declaration | constructor_declaration;
+
+constructor_declaration ::= general_modifier constructor_declarator maybe_empty_block;
+constructor_declarator ::= identifier LPAREN formal_parameter_list_aux RPAREN constructor_initializer_opt;
+constructor_initializer_opt ::= | constructor_initializer;
+constructor_initializer ::= DOISPONTOS BASE LPAREN argument_list RPAREN | DOISPONTOS THIS LPAREN argument_list RPAREN;
