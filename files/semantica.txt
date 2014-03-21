@@ -1,0 +1,30 @@
+class teste {
+	
+	public void novoMetodo(){
+		int y = 3;
+	}
+	
+	public void metodo(){
+		int b = 3;
+		string a = "sds";
+		bool c = false;
+		int d = 7;
+		b = 3;
+		int k;
+		k = 4;
+		int p = b;
+		
+		bool bo = k is int;
+		bool j = 5 > 4;
+		bool h = a == "ss";
+		
+		for (int g = 5; 4 < 4; a = "ssd") {
+			string t = "teste";
+		}
+		
+		novoMetodo();
+	}
+}
+
+//verificar se ja existe
+//testar int b = k;

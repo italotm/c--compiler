@@ -1,4 +1,7 @@
 import java_cup.runtime.*;
+import classes.Verificador;
+import classes.BlocoPrincipal;
+import classes.Variavel;
 
 /*Este codigo foi reusado. Ele serve para nos mostrar aonde ocorreu um erro, ao ler um arquivo de entrada.*/
 parser code {:
@@ -82,8 +85,8 @@ start with compilation_unit;
 compilation_unit ::= using_directive_recursion shift_reduce_global_atributes_namespace_member;
 shift_reduce_global_atributes_namespace_member ::= global_attributes namespace_member_declaration_aux | global_attributes | namespace_member_declaration_aux;
 using_directive_recursion ::= | using_directive | using_directive using_directive_recursion;
-identifier ::= IDENT | IDENTARROBA;
-qualified_identifier ::= identifier | identifier PONTO qualified_identifier;
+identifier ::= IDENT:id {: RESULT = id.toString(); :} | IDENTARROBA;
+qualified_identifier ::= identifier:i {: RESULT = i; :} | identifier PONTO qualified_identifier;
 using_directive ::= | USING qualified_identifier PONTOEVIRGULA | USING identifier IGUAL qualified_identifier PONTOEVIRGULA;    
 
 /*NAMESPACE*/
@@ -114,7 +117,7 @@ assignment_operator::= IGUAL | MAISIGUAL | MENOSIGUAL | VEZESIGUAL | DIVIDEIGUAL
 
 expression_unary_operator ::= MAIS | MENOS | DECREMENTO | INCREMENTO | EXCLAMACAO | TIO | ASTERISCO;
     
-unary_expression::= expression_unary_operator unary_expression | LPAREN type RPAREN unary_expression | primary_expression;
+unary_expression::= expression_unary_operator unary_expression | LPAREN type RPAREN unary_expression | primary_expression:pe {: RESULT = pe; :};
 
 virgula_recursion_aux ::= | VIRGULA | VIRGULA virgula_recursion_aux;
 virgula_optional ::= | VIRGULA; 
@@ -122,18 +125,18 @@ rank_specifier ::= LCOLCHETE virgula_recursion_aux RCOLCHETE;
 rank_specifier_optional ::= | rank_specifier;
 rank_specifier_recursion_optional ::= | rank_specifier | rank_specifier rank_specifier_recursion_optional;
 
-variable_initializer ::= expression | array_initializer;
+variable_initializer ::= expression:e {: RESULT = e; :} | array_initializer;
 variable_initializer_recursion ::= variable_initializer | variable_initializer VIRGULA variable_initializer_recursion; 
 array_initializer::= LCHAVE RCHAVE | LCHAVE variable_initializer_recursion virgula_optional RCHAVE;
 array_initializer_optional ::= | array_initializer;
 
-integral_type::= SBYTE | BYTE|SHORT | USHORT |INT |UINT |LONG |ULONG | CHAR;
+integral_type ::= SBYTE {: RESULT = new String("sby"); :} | BYTE {: RESULT = new String("by"); :} |SHORT {: RESULT = new String("sh"); :} | USHORT {: RESULT = new String("us"); :} |INT {: RESULT = new String("il"); :} |UINT {: RESULT = new String("ui"); :} |LONG {: RESULT = new String("il"); :} |ULONG {: RESULT = new String("il"); :} | CHAR {: RESULT = new String("ch"); :};
 
-built_in_class_type ::= OBJECT | STRING;
+built_in_class_type ::= OBJECT {: RESULT = new String("ob"); :} | STRING {: RESULT = new String("st"); :};
 
-built_in_type::= integral_type | built_in_class_type | BOOL | DECIMAL | FLOAT | DOUBLE;
+built_in_type::= integral_type:it {: RESULT = it; :} | built_in_class_type:bict {: RESULT = bict; :} | BOOL {: RESULT = new String("bo"); :} | DECIMAL {: RESULT = new String("de"); :} | FLOAT {: RESULT = new String("fl"); :} | DOUBLE {: RESULT = new String("do"); :};
 
-non_array_type::= qualified_identifier | built_in_type; 
+non_array_type::= qualified_identifier:qi {: RESULT = qi; :} | built_in_type:bit {: RESULT = bit; :}; 
 
 array_type ::= non_array_type | rank_specifier_optional;
 
@@ -143,7 +146,7 @@ real_literal ::=  REALLITERAL;
 character_literal ::=  CHARLITERAL;
 string_literal ::=  STRINGLITERAL;
 null_literal ::= NULL;
-literal::= boolean_literal | integer_literal | real_literal | character_literal |string_literal | null_literal;
+literal::= boolean_literal {: RESULT = new String("bo"); :} | integer_literal:il {: RESULT = new String("il"); :} | real_literal  {: RESULT = new String("re"); :}| character_literal {: RESULT = new String("ch"); :} |string_literal {: RESULT = new String("st"); :} | null_literal {: RESULT = new String("null"); :};
 predefined_type ::= BOOL |BYTE |CHAR |DECIMAL |DOUBLE | FLOAT | INT | LONG | OBJECT | SBYTE | SHORT | STRING | UINT | ULONG |USHORT;
 
 argument_list::= argument_recursion_optional;
@@ -152,15 +155,15 @@ argument::= expression | ref_or_out expression;
 
 ref_or_out::= REF | OUT;
 increment_decrement ::= INCREMENTO | DECREMENTO;
-type ::= non_array_type rank_specifier_recursion_optional;
+type ::= non_array_type:nat {: RESULT = nat; :} rank_specifier_recursion_optional;
 
 type_or_void::= type | VOID;
 
 primary_expression ::= 
     NEW non_array_type LCOLCHETE expression_list RCOLCHETE rank_specifier_recursion_optional array_initializer_optional |
     NEW array_type array_initializer |
-    literal |
-    identifier|
+    literal:l {: RESULT = l; :}|
+    identifier:i {: RESULT = i; :}|
     identifier PONTO identifier|
     LPAREN expression RPAREN |
     primary_expression PONTO identifier |
@@ -181,21 +184,21 @@ primary_expression ::=
 
 expression ::= 
  	expression INTERROGACAO expression DOISPONTOS expression |
-    expression ORPIPE expression | 
-    expression ECOMERCIALDUPLO expression |
-    expression CIRCUNFLEXO expression |
-    expression IS built_in_type |
-    expression ASTERISCO expression |
-    expression BARRA expression |
-    expression PERCENT expression |  
-    expression PIPE expression |
-    expression ECOMERCIAL expression |
-    expression expression_equality_operator expression |
-    expression expression_relational_operator expression |
-    expression expression_shift_operator expression |
-    expression MAIS expression |
-    expression MENOS expression |
-    unary_expression |
+    expression ORPIPE expression {: RESULT = new String("bo"); :} | 
+    expression ECOMERCIALDUPLO expression {: RESULT = new String("bo"); :} |
+    expression CIRCUNFLEXO expression  {: RESULT = new String("ns"); :} |
+    expression:e IS built_in_type:bit {: Verificador.verificarVariavel(e.toString()); RESULT = new String("bo"); :} |
+    expression ASTERISCO expression {: RESULT = new String("ns"); :} |
+    expression BARRA expression {: RESULT = new String("ns"); :} |
+    expression PERCENT expression {: RESULT = new String("ns"); :} |  
+    expression PIPE expression {: RESULT = new String("ns"); :} |
+    expression ECOMERCIAL expression {: RESULT = new String("ns"); :} |
+    expression:e1 expression_equality_operator expression:e2 {: Verificador.verificarIgualdade(e1.toString(), e2.toString()); RESULT = new String("bo"); :} |
+    expression:e1 expression_relational_operator expression:e2 {:  Verificador.verificarRelacao(e1.toString(), e2.toString()); RESULT = new String("bo"); :} |
+    expression expression_shift_operator expression {: RESULT = new String("ns"); :} |
+    expression MAIS expression {: RESULT = new String("ns"); :} |
+    expression MENOS expression {: RESULT = new String("ns"); :} |
+    unary_expression:ue {: RESULT = ue; :} |
     unary_expression assignment_operator expression ;
 
 /*enum*/
@@ -263,24 +266,24 @@ constant_declaration ::= general_modifier CONST type constant_declarator_aux PON
 constant_modifier ::= | NEW | PUBLIC | PROTECTED | INTERNAL | PRIVATE;
 field_declaration ::= general_init variable_declarator_aux PONTOEVIRGULA;
 field_modifier ::= | NEW | PUBLIC | PROTECTED | INTERNAL | PRIVATE | STATIC | READONLY | VOLATILE;
-variable_declarator_aux ::= variable_declarator | variable_declarator variable_declarator_aux;
-variable_declarator ::= identifier | identifier IGUAL variable_initializer;
+variable_declarator_aux ::= variable_declarator:vd {: RESULT = vd; :} | variable_declarator variable_declarator_aux;
+variable_declarator ::= identifier:i {: RESULT = new Variavel(i.toString(), null); :} | identifier:i IGUAL variable_initializer:vi {: RESULT = new Variavel(i.toString(), vi.toString()); :};
 
 
-method_declaration ::= method_header maybe_empty_block;
-method_header ::= general_init_met_prop LPAREN formal_parameter_list_aux RPAREN;
+method_declaration ::= method_header:mh {: BlocoPrincipal.getInstance().iniciaBloco(mh.toString()); :} maybe_empty_block;
+method_header ::= general_init_met_prop:gimp {: RESULT = gimp; :} LPAREN formal_parameter_list_aux RPAREN;
 method_modifier ::= | NEW | PUBLIC | PROTECTED | INTERNAL | PRIVATE | STATIC | VIRTUAL | SEALED | OVERRIDE | ABSTRACT | EXTERN;
 maybe_empty_block ::= LCHAVE statement_aux RCHAVE | PONTOEVIRGULA;
 statement_aux ::= | statement statement_aux;
 statement ::= labeled_statement | declaration_statement | embedded_statement;
 labeled_statement ::= identifier DOISPONTOS statement;
 declaration_statement ::=  local_variable_declaration PONTOEVIRGULA |  local_constant_declaration PONTOEVIRGULA;
-local_variable_declaration ::= type variable_declarator_aux;
+local_variable_declaration ::= type:t variable_declarator_aux:vd {: if (vd != null) {Verificador.verificaTipo(t.toString(), (Variavel) vd);} :};
 local_constant_declaration ::= CONST type constant_declarator_aux;
 constant_declarator_aux ::= constant_declarator | constant_declarator constant_declarator_aux;
 constant_declarator ::= identifier IGUAL expression;
 embedded_statement ::= maybe_empty_block | statement_expression PONTOEVIRGULA | selection_statement | iteration_statement | jump_statement | try_statement | CHECKED block | UNCHECKED block | lock_statement | using_statement;
-statement_expression ::=  primary_expression LPAREN argument_list RPAREN | NEW type LPAREN argument_list RPAREN | unary_expression assignment_operator expression | primary_expression increment_decrement | increment_decrement primary_expression;
+statement_expression ::=  primary_expression:pe LPAREN argument_list RPAREN {: Verificador.verificarMetodo(pe.toString()); :} | NEW type LPAREN argument_list RPAREN | unary_expression:ue assignment_operator expression:e {: Verificador.verificaAtribuicao(ue.toString(), e.toString()); :} | primary_expression increment_decrement | increment_decrement primary_expression;
 selection_statement ::= if_statement | switch_statement;
 if_statement ::= IF LPAREN expression RPAREN embedded_statement else_part_opt;
 else_part_opt ::= | else_part;
@@ -294,9 +297,9 @@ switch_label ::= CASE expression DOISPONTOS | DEFAULT DOISPONTOS;
 iteration_statement ::= while_statement| do_statement | for_statement | foreach_statement;
 while_statement ::= WHILE LPAREN expression RPAREN embedded_statement;
 do_statement ::= DO embedded_statement WHILE LPAREN expression RPAREN PONTOEVIRGULA;
-for_statement ::= FOR LPAREN for_initializer PONTOEVIRGULA expression_opt PONTOEVIRGULA statement_expression_list_opt RPAREN embedded_statement;
+for_statement ::= FOR LPAREN for_initializer PONTOEVIRGULA expression_opt:eo PONTOEVIRGULA statement_expression_list_opt RPAREN embedded_statement {: Verificador.verificarFor(eo.toString()); :};
 for_initializer ::= | local_variable_declaration | statement_expression_list;
-expression_opt ::= | expression;
+expression_opt ::= | expression:e {: RESULT = e; :};
 statement_expression_list_opt ::= | statement_expression_list;
 statement_expression_list ::= statement_expression | statement_expression statement_expression_list;
 foreach_statement ::= FOREACH LPAREN type identifier IN expression RPAREN embedded_statement;
@@ -340,7 +343,7 @@ remove_accessor_declaration ::= attributes REMOVE block;
 general_modifier ::= | modifier general_modifier;
 modifier ::= NEW | PUBLIC | PROTECTED | INTERNAL | PRIVATE | STATIC | VIRTUAL | SEALED | OVERRIDE | ABSTRACT | EXTERN | VOLATILE;
 general_init ::= general_modifier type_or_void;
-general_init_met_prop ::= general_init qualified_identifier;
+general_init_met_prop ::= general_init qualified_identifier:qi {: RESULT = qi; :};
 
 /*class*/
 class_declaration ::= attributes class_modifier CLASS identifier class_base_opt class_body ponto_virgula_opt;
