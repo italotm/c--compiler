@@ -3,8 +3,8 @@ package classes;
 public class Verificador {
 	
 	public static void verificaTipo(String tipo, Variavel variavel){
-		if (BlocoPrincipal.getInstance().getVariavel(variavel.getNome()) == null){
-		
+		if (BlocoPrincipal.getInstance().getVariavelContexto(variavel.getNome()) == null){
+			
 			if (variavel.getTipo() == null){
 				variavel.setTipo(tipo);
 			}
@@ -12,8 +12,8 @@ public class Verificador {
 			if (tipo.equals(variavel.getTipo())){
 				BlocoPrincipal.getInstance().addBloco(variavel);
 			}else{
-				if (BlocoPrincipal.getInstance().getVariavel(variavel.getTipo()) != null){
-					if (BlocoPrincipal.getInstance().getVariavel(variavel.getTipo()).getTipo().equals(tipo)){
+				if (BlocoPrincipal.getInstance().getVariavelContexto(variavel.getTipo()) != null){
+					if (BlocoPrincipal.getInstance().getVariavelContexto(variavel.getTipo()).getTipo().equals(tipo)){
 						variavel.setTipo(tipo);
 						BlocoPrincipal.getInstance().addBloco(variavel);
 					}else{
@@ -29,8 +29,8 @@ public class Verificador {
 	}
 	
 	public static void verificaAtribuicao(String var1, String var2){
-		Variavel variavel1 = BlocoPrincipal.getInstance().getVariavel(var1);
-		Variavel variavel2 = BlocoPrincipal.getInstance().getVariavel(var2);
+		Variavel variavel1 = BlocoPrincipal.getInstance().getVariavelContexto(var1);
+		Variavel variavel2 = BlocoPrincipal.getInstance().getVariavelContexto(var2);
 		
 		if (variavel1 == null){
 			System.out.println("Variavel não declarada");
@@ -48,14 +48,14 @@ public class Verificador {
 	}
 	
 	public static void verificarVariavel(String var){
-		if (BlocoPrincipal.getInstance().getVariavel(var) == null){
+		if (BlocoPrincipal.getInstance().getVariavelContexto(var) == null){
 			System.out.println("Variavel não declarada");
 		}
 	}
 	
 	public static void verificarRelacao(String var1, String var2){
 		String var1_aux = var1;
-		Variavel variavel1 = BlocoPrincipal.getInstance().getVariavel(var1);
+		Variavel variavel1 = BlocoPrincipal.getInstance().getVariavelContexto(var1);
 		
 		if (variavel1 != null){
 			var1_aux = variavel1.getTipo();
@@ -68,7 +68,7 @@ public class Verificador {
 		
 		
 		String var2_aux = var2;
-		Variavel variavel2 = BlocoPrincipal.getInstance().getVariavel(var2);
+		Variavel variavel2 = BlocoPrincipal.getInstance().getVariavelContexto(var2);
 		
 		if (variavel2 != null){
 			var2_aux = variavel2.getTipo();
@@ -86,9 +86,9 @@ public class Verificador {
 	
 	public static void verificarIgualdade(String var1, String var2){
 		String var1_aux = var1;
-		Variavel variavel1 = BlocoPrincipal.getInstance().getVariavel(var1);
+		Variavel variavel1 = BlocoPrincipal.getInstance().getVariavelContexto(var1);
 		String var2_aux = var2;
-		Variavel variavel2 = BlocoPrincipal.getInstance().getVariavel(var2);
+		Variavel variavel2 = BlocoPrincipal.getInstance().getVariavelContexto(var2);
 		
 		if (variavel1 != null){
 			var1_aux = variavel1.getTipo();
@@ -110,8 +110,16 @@ public class Verificador {
 	}
 	
 	public static void verificarMetodo(String exp){
-		if (!(BlocoPrincipal.getInstance().contemBloco(exp))){
+		if (BlocoPrincipal.getInstance().getFuncaoContexto(exp) == null){
 			System.out.println("Funcao nao declarada!");
+		}
+	}
+	
+	public static void addFuncao(Funcao funcao){
+		if (BlocoPrincipal.getInstance().getFuncaoContexto(funcao.getNome()) != null){
+			System.out.println("Funcao ja declarada!");
+		}else{
+			BlocoPrincipal.getInstance().addBloco(funcao);
 		}
 	}
 }

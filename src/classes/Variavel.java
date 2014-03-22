@@ -1,12 +1,13 @@
 package classes;
 
-public class Variavel {
+public class Variavel implements ObjetoGramatica{
 	
-	private String nome, tipo;
+	private String nome, tipo, tipoObjeto;
 	
-	public Variavel(String nome, String tipo){
+	public Variavel(String nome, String tipo, String tipoObjeto){
 		this.nome = nome;
 		this.tipo = tipo;
+		this.tipoObjeto = tipoObjeto;
 	}
 	
 	public String getNome(){
@@ -19,5 +20,10 @@ public class Variavel {
 	
 	public void setTipo(String tipo){
 		this.tipo = tipo;
+	}
+
+	@Override
+	public String getTipoObjeto() {
+		return tipoObjeto;
 	}
 }

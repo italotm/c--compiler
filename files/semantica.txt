@@ -1,10 +1,13 @@
 class teste {
 	
+	int y;
+	
 	public void novoMetodo(){
-		int y = 3;
+		y = 3;
 	}
 	
 	public void metodo(){
+		y = 4;
 		int b = 3;
 		string a = "sds";
 		bool c = false;
@@ -18,7 +21,7 @@ class teste {
 		bool j = 5 > 4;
 		bool h = a == "ss";
 		
-		for (int g = 5; 4 < 4; a = "ssd") {
+		for (int g = 5; b < 4; a = "ssd") {
 			string t = "teste";
 		}
 		
