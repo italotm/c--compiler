@@ -2,14 +2,17 @@ class teste {
 	
 	int y;
 	
-	public void novoMetodo(){
+	
+	public string novoMetodo(string b, int c){
 		y = 3;
 	}
+	
+	string a;
 	
 	public void metodo(){
 		y = 4;
 		int b = 3;
-		string a = "sds";
+		a = "sds";
 		bool c = false;
 		int d = 7;
 		b = 3;
@@ -25,7 +28,7 @@ class teste {
 			string t = "teste";
 		}
 		
-		novoMetodo();
+		b = novoMetodo();
 	}
 }
 

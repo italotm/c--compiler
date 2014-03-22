@@ -20,7 +20,12 @@ public class Verificador {
 						System.out.println("Erro de tipo!");
 					}
 				}else{
-					System.out.println("Erro de tipo!");
+					if (BlocoPrincipal.getInstance().getFuncaoContexto(variavel.getTipo()).getRetorno().equals(tipo)){
+						variavel.setTipo(tipo);
+						BlocoPrincipal.getInstance().addBloco(variavel);
+					}else{
+						System.out.println("Erro de tipo!");
+					}
 				}
 			}
 		}else{
@@ -31,13 +36,20 @@ public class Verificador {
 	public static void verificaAtribuicao(String var1, String var2){
 		Variavel variavel1 = BlocoPrincipal.getInstance().getVariavelContexto(var1);
 		Variavel variavel2 = BlocoPrincipal.getInstance().getVariavelContexto(var2);
+		Funcao funcao = BlocoPrincipal.getInstance().getFuncaoContexto(var2);
 		
 		if (variavel1 == null){
 			System.out.println("Variavel não declarada");
 		}else{
 			if (variavel2 == null){
-				if (!(var2.equals(variavel1.getTipo()))){
-					System.out.println("Variavel não declarada");
+				if (funcao == null){
+					if (!(var2.equals(variavel1.getTipo()))){
+						System.out.println("Variavel não declarada");
+					}
+				}else{
+					if (!(variavel1.getTipo().equals(funcao.getRetorno()))){
+						System.out.println("Erro de tipo!");
+					}
 				}
 			}else{
 				if (!(variavel1.getTipo().equals(variavel2.getTipo()))){

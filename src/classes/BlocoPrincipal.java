@@ -34,9 +34,12 @@ public class BlocoPrincipal {
 	
 	public void finalizaBloco(){
 		contexto--;
+		String nomeClasse = bloco.getTipo().split(";")[0];
 		for (Bloco bloco : listaBlocos) {
 			if (bloco.getContexto() == contexto){
-				this.bloco = bloco; 
+				if (this.bloco.getTipo().equals(bloco.getTipo()) || bloco.getTipo().equals(nomeClasse+";")){
+					this.bloco = bloco; 
+				}
 			}
 		}
 	}

@@ -169,7 +169,7 @@ primary_expression ::=
     LPAREN expression RPAREN |
     primary_expression PONTO identifier |
     predefined_type PONTO identifier |
-    primary_expression LPAREN argument_list RPAREN |
+    qualified_identifier:qi {: RESULT = qi; :} LPAREN argument_list RPAREN |
     primary_expression LCOLCHETE expression_list RCOLCHETE |
     THIS |
     BASE PONTO identifier |
@@ -224,11 +224,11 @@ delegate_declaration ::= attributes delegate_modifier_aux DELEGATE type_or_void 
 delegate_modifier_aux ::= | delegate_modifier | delegate_modifier delegate_modifier_aux;
 delegate_modifier ::= NEW | PUBLIC | PROTECTED | INTERNAL | PRIVATE;
 
-formal_parameter_list_aux ::= | formal_parameter_list;
-formal_parameter_list ::= fixed_parameters | parameter_array;
-fixed_parameters ::= fixed_parameter_aux;
-fixed_parameter_aux ::= fixed_parameter | fixed_parameter VIRGULA parameter_array | fixed_parameter VIRGULA fixed_parameter_aux;
-fixed_parameter ::= attributes parameter_modifier type identifier;
+formal_parameter_list_aux ::= | formal_parameter_list:fpl {: RESULT = fpl; :};
+formal_parameter_list ::= fixed_parameters:fp {: RESULT = fp; :} | parameter_array;
+fixed_parameters ::= fixed_parameter_aux:fpa {: RESULT = fpa; :};
+fixed_parameter_aux ::= fixed_parameter:fp {: RESULT = fp; :} | fixed_parameter:fp {: RESULT = fp; :} VIRGULA fixed_parameter_aux:fpa;
+fixed_parameter ::= attributes parameter_modifier type:t identifier:i {: System.out.println(t); RESULT = new Variavel(i.toString(), t.toString(), "variavel"); :};
 parameter_modifier ::= | REF | OUT;
 parameter_array ::= attributes PARAMS array_type identifier;
 
@@ -271,8 +271,8 @@ variable_declarator_aux ::= variable_declarator:vd {: RESULT = vd; :} | variable
 variable_declarator ::= identifier:i {: RESULT = new Variavel(i.toString(), null, "variavel"); :} | identifier:i IGUAL variable_initializer:vi {: RESULT = new Variavel(i.toString(), vi.toString(), "variavel"); :};
 
 
-method_declaration ::= method_header:mh {: Verificador.addFuncao((new Funcao(mh.toString(), null, null, "funcao"))); BlocoPrincipal.getInstance().iniciaBloco(mh.toString()); :} maybe_empty_block {: BlocoPrincipal.getInstance().finalizaBloco(); :};
-method_header ::= general_init_met_prop:gimp {: RESULT = gimp; :} LPAREN formal_parameter_list_aux RPAREN;
+method_declaration ::= method_header:mh {: Verificador.addFuncao((new Funcao(((Variavel) mh).getNome(), ((Variavel) mh).getTipo(), null, "funcao"))); BlocoPrincipal.getInstance().iniciaBloco(mh.toString()); :} maybe_empty_block {: BlocoPrincipal.getInstance().finalizaBloco(); :};
+method_header ::= general_init_met_prop:gimp {: RESULT = gimp; :} LPAREN formal_parameter_list_aux:fpla {: System.out.println(fpla); :} RPAREN;
 method_modifier ::= | NEW | PUBLIC | PROTECTED | INTERNAL | PRIVATE | STATIC | VIRTUAL | SEALED | OVERRIDE | ABSTRACT | EXTERN;
 maybe_empty_block ::= LCHAVE statement_aux RCHAVE | PONTOEVIRGULA;
 statement_aux ::= | statement statement_aux;
@@ -344,7 +344,7 @@ remove_accessor_declaration ::= attributes REMOVE block;
 general_modifier ::= | modifier general_modifier;
 modifier ::= NEW | PUBLIC | PROTECTED | INTERNAL | PRIVATE | STATIC | VIRTUAL | SEALED | OVERRIDE | ABSTRACT | EXTERN | VOLATILE;
 general_init ::= general_modifier type_or_void:t {: RESULT = t; :};
-general_init_met_prop ::= general_init qualified_identifier:qi {: RESULT = qi; :};
+general_init_met_prop ::= general_init:t qualified_identifier:qi {: RESULT = new Variavel(qi.toString(), t.toString(), "variavel"); :};
 
 /*class*/
 class_declaration ::= attributes class_modifier CLASS identifier:i {: BlocoPrincipal.getInstance().iniciaBloco(i.toString()+";"); :} class_base_opt class_body ponto_virgula_opt;
@@ -352,7 +352,7 @@ class_base_opt ::= | class_base;
 class_modifier ::= | NEW | PUBLIC | PROTECTED | INTERNAL | PRIVATE | ABSTRACT | SEALED;
 class_base ::= DOISPONTOS qualified_identifier_list | DOISPONTOS built_in_class_type qualified_identifier_list_opt;
 qualified_identifier_list_opt ::= | VIRGULA qualified_identifier_list;
-class_body ::= LCHAVE class_member_declaration_aux RCHAVE;
+class_body ::= LCHAVE class_member_declaration_aux RCHAVE {: BlocoPrincipal.getInstance().finalizaBloco(); :};
 
 class_member_declaration_aux ::= | class_member_declaration class_member_declaration_aux;
 class_member_declaration ::= constant_declaration | field_declaration | method_declaration | type_declaration | constructor_declaration;
