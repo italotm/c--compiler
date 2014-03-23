@@ -9,6 +9,9 @@ class teste {
 	
 	string a;
 	
+	public int teste(){
+	}
+	
 	public void metodo(){
 		y = 4;
 		int b = 3;
@@ -28,7 +31,7 @@ class teste {
 			string t = "teste";
 		}
 		
-		b = novoMetodo();
+		a = novoMetodo("sdsd", teste());
 	}
 }
 

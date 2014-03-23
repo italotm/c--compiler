@@ -3,6 +3,7 @@ import classes.Verificador;
 import classes.BlocoPrincipal;
 import classes.Variavel;
 import classes.Funcao;
+import java.util.ArrayList;
 
 /*Este codigo foi reusado. Ele serve para nos mostrar aonde ocorreu um erro, ao ler um arquivo de entrada.*/
 parser code {:
@@ -151,8 +152,8 @@ literal::= boolean_literal {: RESULT = new String("bo"); :} | integer_literal:il
 predefined_type ::= BOOL |BYTE |CHAR |DECIMAL |DOUBLE | FLOAT | INT | LONG | OBJECT | SBYTE | SHORT | STRING | UINT | ULONG |USHORT;
 
 argument_list::= argument_recursion_optional;
-argument_recursion_optional ::= | argument argument_recursion_optional;
-argument::= expression | ref_or_out expression; 
+argument_recursion_optional ::= | argument | argument VIRGULA argument_recursion_optional;
+argument::= identifier:i {: Verificador.addParametro(new Variavel(i.toString(), null, "variavel")); :} | expression:e {: Verificador.addParametro(new Variavel(e.toString(), null, "variavel")); :} | ref_or_out expression; 
 
 ref_or_out::= REF | OUT;
 increment_decrement ::= INCREMENTO | DECREMENTO;
@@ -224,11 +225,11 @@ delegate_declaration ::= attributes delegate_modifier_aux DELEGATE type_or_void 
 delegate_modifier_aux ::= | delegate_modifier | delegate_modifier delegate_modifier_aux;
 delegate_modifier ::= NEW | PUBLIC | PROTECTED | INTERNAL | PRIVATE;
 
-formal_parameter_list_aux ::= | formal_parameter_list:fpl {: RESULT = fpl; :};
-formal_parameter_list ::= fixed_parameters:fp {: RESULT = fp; :} | parameter_array;
-fixed_parameters ::= fixed_parameter_aux:fpa {: RESULT = fpa; :};
-fixed_parameter_aux ::= fixed_parameter:fp {: RESULT = fp; :} | fixed_parameter:fp {: RESULT = fp; :} VIRGULA fixed_parameter_aux:fpa;
-fixed_parameter ::= attributes parameter_modifier type:t identifier:i {: System.out.println(t); RESULT = new Variavel(i.toString(), t.toString(), "variavel"); :};
+formal_parameter_list_aux ::= | formal_parameter_list;
+formal_parameter_list ::= fixed_parameters | parameter_array;
+fixed_parameters ::= fixed_parameter_aux;
+fixed_parameter_aux ::= fixed_parameter  | fixed_parameter VIRGULA fixed_parameter_aux;
+fixed_parameter ::= attributes parameter_modifier type:t identifier:i {: Verificador.addParametro(new Variavel(i.toString(), t.toString(), "variavel")); :};
 parameter_modifier ::= | REF | OUT;
 parameter_array ::= attributes PARAMS array_type identifier;
 
@@ -271,8 +272,8 @@ variable_declarator_aux ::= variable_declarator:vd {: RESULT = vd; :} | variable
 variable_declarator ::= identifier:i {: RESULT = new Variavel(i.toString(), null, "variavel"); :} | identifier:i IGUAL variable_initializer:vi {: RESULT = new Variavel(i.toString(), vi.toString(), "variavel"); :};
 
 
-method_declaration ::= method_header:mh {: Verificador.addFuncao((new Funcao(((Variavel) mh).getNome(), ((Variavel) mh).getTipo(), null, "funcao"))); BlocoPrincipal.getInstance().iniciaBloco(mh.toString()); :} maybe_empty_block {: BlocoPrincipal.getInstance().finalizaBloco(); :};
-method_header ::= general_init_met_prop:gimp {: RESULT = gimp; :} LPAREN formal_parameter_list_aux:fpla {: System.out.println(fpla); :} RPAREN;
+method_declaration ::= method_header:mh {: Verificador.addFuncao((new Funcao(((Variavel) mh).getNome(), ((Variavel) mh).getTipo(), new ArrayList<Variavel>(), "funcao"))); BlocoPrincipal.getInstance().iniciaBloco(mh.toString()); :} maybe_empty_block {: BlocoPrincipal.getInstance().finalizaBloco(); :};
+method_header ::= general_init_met_prop:gimp {: RESULT = gimp; :} LPAREN formal_parameter_list_aux:fpla {: Verificador.addParametro((Variavel) fpla); :} RPAREN;
 method_modifier ::= | NEW | PUBLIC | PROTECTED | INTERNAL | PRIVATE | STATIC | VIRTUAL | SEALED | OVERRIDE | ABSTRACT | EXTERN;
 maybe_empty_block ::= LCHAVE statement_aux RCHAVE | PONTOEVIRGULA;
 statement_aux ::= | statement statement_aux;
@@ -284,7 +285,7 @@ local_constant_declaration ::= CONST type constant_declarator_aux;
 constant_declarator_aux ::= constant_declarator | constant_declarator constant_declarator_aux;
 constant_declarator ::= identifier IGUAL expression;
 embedded_statement ::= maybe_empty_block | statement_expression PONTOEVIRGULA | selection_statement | iteration_statement | jump_statement | try_statement | CHECKED block | UNCHECKED block | lock_statement | using_statement;
-statement_expression ::=  primary_expression:pe LPAREN argument_list RPAREN {: Verificador.verificarMetodo(pe.toString()); :} | NEW type LPAREN argument_list RPAREN | unary_expression:ue assignment_operator expression:e {: Verificador.verificaAtribuicao(ue.toString(), e.toString()); :} | primary_expression increment_decrement | increment_decrement primary_expression;
+statement_expression ::=  primary_expression:pe {: Verificador.addParametro(null); Verificador.verificarMetodo(pe.toString()); :} | NEW type LPAREN argument_list RPAREN | unary_expression:ue assignment_operator expression:e {: Verificador.verificaAtribuicao(ue.toString(), e.toString()); :} | primary_expression increment_decrement | increment_decrement primary_expression;
 selection_statement ::= if_statement | switch_statement;
 if_statement ::= IF LPAREN expression RPAREN embedded_statement else_part_opt;
 else_part_opt ::= | else_part;

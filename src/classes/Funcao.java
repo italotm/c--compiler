@@ -30,4 +30,8 @@ public class Funcao implements ObjetoGramatica{
 	public String getTipoObjeto() {
 		return tipoObjeto;
 	}
+	
+	public void addParametro(Variavel var){
+		parametros.add(var);
+	}
 }

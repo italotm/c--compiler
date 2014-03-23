@@ -1,6 +1,11 @@
 package classes;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Verificador {
+	
+	public static List<Variavel> listaAux = new ArrayList<Variavel>();
 	
 	public static void verificaTipo(String tipo, Variavel variavel){
 		if (BlocoPrincipal.getInstance().getVariavelContexto(variavel.getNome()) == null){
@@ -49,6 +54,8 @@ public class Verificador {
 				}else{
 					if (!(variavel1.getTipo().equals(funcao.getRetorno()))){
 						System.out.println("Erro de tipo!");
+					}else{
+						verificarMetodo(var2);
 					}
 				}
 			}else{
@@ -122,16 +129,50 @@ public class Verificador {
 	}
 	
 	public static void verificarMetodo(String exp){
-		if (BlocoPrincipal.getInstance().getFuncaoContexto(exp) == null){
+		Funcao funcao = BlocoPrincipal.getInstance().getFuncaoContexto(exp);
+		if (funcao == null){
 			System.out.println("Funcao nao declarada!");
+		}else{
+			if (funcao.getParametros().size() == listaAux.size()){
+				for (int i = 0; i < listaAux.size(); i++) {
+					if (!(listaAux.get(i).getNome().equals(funcao.getParametros().get(i).getTipo()))){
+						Variavel varAux = BlocoPrincipal.getInstance().getVariavelContexto(listaAux.get(i).getNome());
+						if (varAux != null){
+							if (!(varAux.getTipo().equals(funcao.getParametros().get(i).getTipo()))){
+								System.out.println("Erro tipo!");
+							}
+						}else{
+							Funcao f = BlocoPrincipal.getInstance().getFuncaoContexto(listaAux.get(i).getNome());
+							if (f != null){
+								if (!(f.getRetorno().equals(funcao.getParametros().get(i).getTipo()))){
+									System.out.println("Erro de tipo!");
+								}
+							}else{
+								System.out.println("Erro de tipo!");
+							}
+						}
+					}
+				}
+			}
 		}
+		listaAux.clear();
 	}
 	
 	public static void addFuncao(Funcao funcao){
+		for (Variavel var : listaAux) {
+			funcao.addParametro(var);
+		}
+		listaAux.clear();
 		if (BlocoPrincipal.getInstance().getFuncaoContexto(funcao.getNome()) != null){
 			System.out.println("Funcao ja declarada!");
 		}else{
 			BlocoPrincipal.getInstance().addBloco(funcao);
+		}
+	}
+	
+	public static void addParametro(Variavel var){
+		if (var != null){
+			listaAux.add(var);
 		}
 	}
 }
