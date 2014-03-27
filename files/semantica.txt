@@ -1,15 +1,34 @@
+class imovel{
+}
+
+class apartamento : imovel {
+
+}
+
+class casa : imovel{
+	int y;
+	
+	public string novoMetodo(string b, int c){
+		y = 3;
+	}
+}
+
 class teste {
 	
 	int y;
-	
-	
+
 	public string novoMetodo(string b, int c){
 		y = 3;
 	}
 	
 	string a;
 	
-	public int teste(){
+	public int polimorfismo(){
+		imovel c = new casa();
+		imovel p = new apartamento();
+		int e = 4;
+		c = new apartamento();
+		p = new imovel();
 	}
 	
 	public void metodo(){
@@ -27,11 +46,11 @@ class teste {
 		bool j = 5 > 4;
 		bool h = a == "ss";
 		
-		for (int g = 5; b < 4; a = "ssd") {
+		for (int g = 5; 3 < 4; a = "ssd") {
 			string t = "teste";
 		}
 		
-		a = novoMetodo("sdsd", teste());
+		a = novoMetodo("sdsd", polimorfismo());
 	}
 }
 

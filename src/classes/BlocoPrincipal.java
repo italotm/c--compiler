@@ -7,11 +7,13 @@ public class BlocoPrincipal {
 	
 	private static BlocoPrincipal instance;
 	private List<Bloco> listaBlocos;
+	private List<Classe> classes;
 	private Bloco bloco;
 	private int contexto;
 	
 	private BlocoPrincipal(){
 		listaBlocos = new ArrayList<Bloco>();
+		classes = new ArrayList<Classe>();
 		contexto = 0;
 	}
 	
@@ -27,6 +29,22 @@ public class BlocoPrincipal {
 		if (bloco != null){
 			bloco = new Bloco(contexto, bloco.getTipo()+tipo);
 		}else{
+			classes.add(new Classe(tipo.split(";")[0], null, "classe"));
+			bloco = new Bloco(contexto, tipo);
+		}
+		listaBlocos.add(bloco);
+	}
+	
+	public void iniciaBloco(String tipo, String heranca){
+		if (!contemClasse(heranca)){
+			System.out.println("Classe " + heranca + " não declarada!");
+		}
+		
+		contexto++;
+		if (bloco != null){
+			bloco = new Bloco(contexto, bloco.getTipo()+tipo);
+		}else{
+			classes.add(new Classe(tipo.split(";")[0], heranca, "classe"));
 			bloco = new Bloco(contexto, tipo);
 		}
 		listaBlocos.add(bloco);
@@ -34,13 +52,17 @@ public class BlocoPrincipal {
 	
 	public void finalizaBloco(){
 		contexto--;
-		String nomeClasse = bloco.getTipo().split(";")[0];
-		for (Bloco bloco : listaBlocos) {
-			if (bloco.getContexto() == contexto){
-				if (this.bloco.getTipo().equals(bloco.getTipo()) || bloco.getTipo().equals(nomeClasse+";")){
-					this.bloco = bloco; 
+		if (contexto > 0){
+			String nomeClasse = bloco.getTipo().split(";")[0];
+			for (Bloco bloco : listaBlocos) {
+				if (bloco.getContexto() == contexto){
+					if (this.bloco.getTipo().equals(bloco.getTipo()) || bloco.getTipo().equals(nomeClasse+";")){
+						this.bloco = bloco; 
+					}
 				}
 			}
+		}else{
+			bloco = null;
 		}
 	}
 	
@@ -64,12 +86,33 @@ public class BlocoPrincipal {
 	}
 	
 	public Funcao getFuncaoContexto(String nome){
+		String nomeClasse = bloco.getTipo().split(";")[0];
 		for (Bloco bloco : listaBlocos) {
-			if (bloco.getContexto() <= contexto){
-				ObjetoGramatica objeto = bloco.getObjeto(nome, "funcao");
-				if (objeto != null){
-					return ((Funcao) objeto);
+			if (this.bloco.getTipo().equals(bloco.getTipo()) || bloco.getTipo().equals(nomeClasse+";")){
+				if (bloco.getContexto() <= contexto){
+					ObjetoGramatica objeto = bloco.getObjeto(nome, "funcao");
+					if (objeto != null){
+						return ((Funcao) objeto);
+					}
 				}
+			}
+		}
+		return null;
+	}
+	
+	public boolean contemClasse(String nome){
+		for (Classe classe : classes) {
+			if (classe.getNome().equals(nome)){
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public Classe getClasse(String nome){
+		for (Classe classe : classes) {
+			if (classe.getNome().equals(nome)){
+				return classe;
 			}
 		}
 		return null;

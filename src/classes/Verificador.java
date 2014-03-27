@@ -8,33 +8,53 @@ public class Verificador {
 	public static List<Variavel> listaAux = new ArrayList<Variavel>();
 	
 	public static void verificaTipo(String tipo, Variavel variavel){
-		if (BlocoPrincipal.getInstance().getVariavelContexto(variavel.getNome()) == null){
-			
-			if (variavel.getTipo() == null){
-				variavel.setTipo(tipo);
-			}
-			
-			if (tipo.equals(variavel.getTipo())){
-				BlocoPrincipal.getInstance().addBloco(variavel);
-			}else{
-				if (BlocoPrincipal.getInstance().getVariavelContexto(variavel.getTipo()) != null){
-					if (BlocoPrincipal.getInstance().getVariavelContexto(variavel.getTipo()).getTipo().equals(tipo)){
-						variavel.setTipo(tipo);
-						BlocoPrincipal.getInstance().addBloco(variavel);
-					}else{
-						System.out.println("Erro de tipo!");
-					}
+		if (BlocoPrincipal.getInstance().contemClasse(tipo)){
+			if (!(variavel.getTipo().equals(tipo))){
+				Classe classe = BlocoPrincipal.getInstance().getClasse(variavel.getTipo());
+				if (!(classe.getHeranca().equals(tipo))){
+					System.out.println("Erro de tipo1!");
 				}else{
-					if (BlocoPrincipal.getInstance().getFuncaoContexto(variavel.getTipo()).getRetorno().equals(tipo)){
-						variavel.setTipo(tipo);
-						BlocoPrincipal.getInstance().addBloco(variavel);
-					}else{
-						System.out.println("Erro de tipo!");
-					}
+					variavel.setTipo(classe.getHeranca());
+					BlocoPrincipal.getInstance().addBloco(variavel);
 				}
+			}else{
+				BlocoPrincipal.getInstance().addBloco(variavel);
 			}
 		}else{
-			System.out.println("Variavel ja declarada");
+			if (!(BlocoPrincipal.getInstance().contemClasse(variavel.getTipo()))){
+				if (BlocoPrincipal.getInstance().getVariavelContexto(variavel.getNome()) == null){
+					
+					if (variavel.getTipo() == null){
+						variavel.setTipo(tipo);
+					}
+					
+					if (tipo.equals(variavel.getTipo())){
+						BlocoPrincipal.getInstance().addBloco(variavel);
+					}else{
+						if (BlocoPrincipal.getInstance().getVariavelContexto(variavel.getTipo()) != null){
+							if (BlocoPrincipal.getInstance().getVariavelContexto(variavel.getTipo()).getTipo().equals(tipo)){
+								variavel.setTipo(tipo);
+								BlocoPrincipal.getInstance().addBloco(variavel);
+							}else{
+								System.out.println("Erro de tipo2!");
+							}
+						}else{
+							if (BlocoPrincipal.getInstance().getFuncaoContexto(variavel.getTipo()).getRetorno().equals(tipo)){
+								variavel.setTipo(tipo);
+								BlocoPrincipal.getInstance().addBloco(variavel);
+							}else{
+								System.out.println("Erro de tipo3!");
+							}
+						}
+					}
+				}else{
+					System.out.println("Erro de tipo4!");
+				}
+			}else{
+				if (!(tipo.equals(variavel.getTipo()))){
+					System.out.println("Tipo não Declarado");
+				}
+			}
 		}
 	}
 	
@@ -49,18 +69,26 @@ public class Verificador {
 			if (variavel2 == null){
 				if (funcao == null){
 					if (!(var2.equals(variavel1.getTipo()))){
-						System.out.println("Variavel não declarada");
+						Classe classe = BlocoPrincipal.getInstance().getClasse(var2);
+
+						if (classe != null){
+							if (!(classe.getNome().equals(variavel1.getTipo()) || classe.getHeranca().equals(variavel1.getTipo()))){
+								System.out.println("Erro de tipo5!");
+							}
+						}else{
+							System.out.println("Erro de tipo6!");
+						}
 					}
 				}else{
 					if (!(variavel1.getTipo().equals(funcao.getRetorno()))){
-						System.out.println("Erro de tipo!");
+						System.out.println("Erro de tipo7!");
 					}else{
 						verificarMetodo(var2);
 					}
 				}
 			}else{
 				if (!(variavel1.getTipo().equals(variavel2.getTipo()))){
-					System.out.println("Erro de tipo!");
+					System.out.println("Erro de tipo8!");
 				}
 			}
 		}
@@ -94,12 +122,12 @@ public class Verificador {
 		}
 		
 		if (!(var2_aux.equals("il") || var2_aux.equals("fl") || var2_aux.equals("lo") || var2_aux.equals("de") || var2_aux.equals("do") || var2_aux.equals("ch"))){
-			System.out.println("Erro de tipo");
+			System.out.println("Erro de tipo9");
 			return;
 		}
 		
 		if (!(var1_aux.equals(var2_aux))){
-			System.out.println("Erro de tipo!");
+			System.out.println("Erro de tipo10!");
 		}
 	}
 	
@@ -118,13 +146,13 @@ public class Verificador {
 		}
 		
 		if (!(var1_aux.equals(var2_aux))){
-			System.out.println("Erro de tipo!");
+			System.out.println("Erro de tipo11!");
 		}
 	}
 	
 	public static void verificarFor(String exp){
 		if (!(exp.equals("bo"))){
-			System.out.println("Erro de tipo!");
+			System.out.println("Erro de tipo12!");
 		}
 	}
 	
@@ -145,10 +173,10 @@ public class Verificador {
 							Funcao f = BlocoPrincipal.getInstance().getFuncaoContexto(listaAux.get(i).getNome());
 							if (f != null){
 								if (!(f.getRetorno().equals(funcao.getParametros().get(i).getTipo()))){
-									System.out.println("Erro de tipo!");
+									System.out.println("Erro de tipo13!");
 								}
 							}else{
-								System.out.println("Erro de tipo!");
+								System.out.println("Erro de tipo14!");
 							}
 						}
 					}

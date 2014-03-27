@@ -191,8 +191,8 @@ string_literal = \"([^\\\"]|\\.)*\" | @\"([^\\\"]|\\.)*\"
 	{single_comment} {  }
 	{identifier}    { return symbol(sym.IDENT, new String(yytext())); }
 	{identifier2}    { return symbol(sym.IDENTARROBA, new String(yytext())); }
-	{integer_literal}    { return symbol(sym.INTEGERLITERAL); }
-	{real_literal}    { return symbol(sym.REALLITERAL); }
-	{char_literal}    { return symbol(sym.CHARLITERAL); }
+	{integer_literal}    { return symbol(sym.INTEGERLITERAL, new Integer(yytext())); }
+	{real_literal}    { return symbol(sym.REALLITERAL, new Double(yytext())); }
+	{char_literal}    { return symbol(sym.CHARLITERAL, new Character(yytext().charAt(1))); }
 	{string_literal}    { return symbol(sym.STRINGLITERAL); }
 	<<EOF>> { return symbol(sym.EOF); }

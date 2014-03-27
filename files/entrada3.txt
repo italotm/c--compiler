@@ -20,7 +20,7 @@ namespace EnumApplication {
 		}
 			
 		static void Main(string[] args) { 
-			novo num = 5;
+			//novo num = 5;
 			
 			if (num < 10){
 				num++;
@@ -28,13 +28,18 @@ namespace EnumApplication {
 				num--;
 			}
 			
-			while (boo) {
+			while (a) {
 				while (boo2){
-					if (a = b) {
+					if (a) {
 						a = 3;
 					}
 				}
 			}
+			
+			for (int i; i < 5; i++){
+			}
+			
+		
 		 }
 		
 	}

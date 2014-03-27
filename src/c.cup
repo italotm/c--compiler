@@ -143,17 +143,17 @@ non_array_type::= qualified_identifier:qi {: RESULT = qi; :} | built_in_type:bit
 array_type ::= non_array_type | rank_specifier_optional;
 
 boolean_literal ::= TRUE | FALSE;
-integer_literal ::= INTEGERLITERAL;
+integer_literal ::= INTEGERLITERAL:i {: RESULT = i; :};
 real_literal ::=  REALLITERAL;
 character_literal ::=  CHARLITERAL;
 string_literal ::=  STRINGLITERAL;
 null_literal ::= NULL;
-literal::= boolean_literal {: RESULT = new String("bo"); :} | integer_literal:il {: RESULT = new String("il"); :} | real_literal  {: RESULT = new String("re"); :}| character_literal {: RESULT = new String("ch"); :} |string_literal {: RESULT = new String("st"); :} | null_literal {: RESULT = new String("null"); :};
+literal::= boolean_literal {: RESULT = new String("bo"); :} | integer_literal:il {: RESULT = (new String("il")); :} | real_literal  {: RESULT = new String("re"); :}| character_literal {: RESULT = new String("ch"); :} |string_literal {: RESULT = new String("st"); :} | null_literal {: RESULT = new String("null"); :};
 predefined_type ::= BOOL |BYTE |CHAR |DECIMAL |DOUBLE | FLOAT | INT | LONG | OBJECT | SBYTE | SHORT | STRING | UINT | ULONG |USHORT;
 
 argument_list::= argument_recursion_optional;
 argument_recursion_optional ::= | argument | argument VIRGULA argument_recursion_optional;
-argument::= identifier:i {: Verificador.addParametro(new Variavel(i.toString(), null, "variavel")); :} | expression:e {: Verificador.addParametro(new Variavel(e.toString(), null, "variavel")); :} | ref_or_out expression; 
+argument::= identifier:i {: if (i != null){ Verificador.addParametro(new Variavel(i.toString(), null, "variavel"));} :} | expression:e {: if (e != null){ Verificador.addParametro(new Variavel(e.toString(), null, "variavel"));} :} | ref_or_out expression; 
 
 ref_or_out::= REF | OUT;
 increment_decrement ::= INCREMENTO | DECREMENTO;
@@ -176,7 +176,7 @@ primary_expression ::=
     BASE PONTO identifier |
     BASE LCOLCHETE expression_list RCOLCHETE |
     primary_expression increment_decrement |
-    NEW type LPAREN argument_list RPAREN |
+    NEW type:t {: RESULT = t; :} LPAREN argument_list RPAREN |
     TYPEOF LPAREN type_or_void RPAREN |
     CHECKED LPAREN expression RPAREN |
     UNCHECKED LPAREN expression RPAREN;
@@ -185,18 +185,19 @@ primary_expression ::=
 
 
 expression ::= 
+	identifier:i {: RESULT = i;  :} |
  	expression INTERROGACAO expression DOISPONTOS expression |
     expression ORPIPE expression {: RESULT = new String("bo"); :} | 
     expression ECOMERCIALDUPLO expression {: RESULT = new String("bo"); :} |
     expression CIRCUNFLEXO expression  {: RESULT = new String("ns"); :} |
-    expression:e IS built_in_type:bit {: Verificador.verificarVariavel(e.toString()); RESULT = new String("bo"); :} |
+    expression:e IS built_in_type:bit {: if (e != null){ Verificador.verificarVariavel(e.toString()); } RESULT = new String("bo"); :} |
     expression ASTERISCO expression {: RESULT = new String("ns"); :} |
     expression BARRA expression {: RESULT = new String("ns"); :} |
     expression PERCENT expression {: RESULT = new String("ns"); :} |  
     expression PIPE expression {: RESULT = new String("ns"); :} |
     expression ECOMERCIAL expression {: RESULT = new String("ns"); :} |
-    expression:e1 expression_equality_operator expression:e2 {: Verificador.verificarIgualdade(e1.toString(), e2.toString()); RESULT = new String("bo"); :} |
-    expression:e1 expression_relational_operator expression:e2 {:  Verificador.verificarRelacao(e1.toString(), e2.toString()); RESULT = new String("bo"); :} |
+    expression:e1 expression_equality_operator expression:e2 {: if (e1 != null && e2 != null ){ Verificador.verificarIgualdade(e1.toString(), e2.toString()); } RESULT = new String("bo"); :} |
+    expression:e1 expression_relational_operator expression:e2 {: if (e1 != null && e2 != null ){ Verificador.verificarRelacao(e1.toString(), e2.toString()); } RESULT = new String("bo"); :} |
     expression expression_shift_operator expression {: RESULT = new String("ns"); :} |
     expression MAIS expression {: RESULT = new String("ns"); :} |
     expression MENOS expression {: RESULT = new String("ns"); :} |
@@ -229,7 +230,7 @@ formal_parameter_list_aux ::= | formal_parameter_list;
 formal_parameter_list ::= fixed_parameters | parameter_array;
 fixed_parameters ::= fixed_parameter_aux;
 fixed_parameter_aux ::= fixed_parameter  | fixed_parameter VIRGULA fixed_parameter_aux;
-fixed_parameter ::= attributes parameter_modifier type:t identifier:i {: Verificador.addParametro(new Variavel(i.toString(), t.toString(), "variavel")); :};
+fixed_parameter ::= attributes parameter_modifier type:t identifier:i {: if (i != null && t != null) Verificador.addParametro(new Variavel(i.toString(), t.toString(), "variavel")); :};
 parameter_modifier ::= | REF | OUT;
 parameter_array ::= attributes PARAMS array_type identifier;
 
@@ -259,33 +260,33 @@ interface_indexer_declaration ::= attributes new_opt type THIS LCOLCHETE formal_
 struct_declaration ::= attributes struct_modifier STRUCT identifier qualified_identifier_list_aux struct_body ponto_virgula_opt;
 struct_modifier ::= | NEW | PUBLIC | PROTECTED | INTERNAL | PRIVATE;
 qualified_identifier_list_aux ::= | DOISPONTOS qualified_identifier_list;
-qualified_identifier_list ::= qualified_identifier | qualified_identifier VIRGULA qualified_identifier_list;
+qualified_identifier_list ::= qualified_identifier:qi {: RESULT = qi; :} | qualified_identifier VIRGULA qualified_identifier_list;
 struct_body ::= LCHAVE struct_member_declaration_aux RCHAVE;
 struct_member_declaration_aux ::= | struct_member_declaration struct_member_declaration_aux;
 
 struct_member_declaration ::= constant_declaration | field_declaration | method_declaration | property_declaration | event_declaration;
 constant_declaration ::= general_modifier CONST type constant_declarator_aux PONTOEVIRGULA;
 constant_modifier ::= | NEW | PUBLIC | PROTECTED | INTERNAL | PRIVATE;
-field_declaration ::= general_init:gi variable_declarator_aux:vd {: if (vd != null) { Verificador.verificaTipo(gi.toString(), (Variavel) vd);} :} PONTOEVIRGULA;
+field_declaration ::= general_init:gi variable_declarator_aux:vd {: if (vd != null && gi != null) { Verificador.verificaTipo(gi.toString(), (Variavel) vd);} :} PONTOEVIRGULA;
 field_modifier ::= | NEW | PUBLIC | PROTECTED | INTERNAL | PRIVATE | STATIC | READONLY | VOLATILE;
 variable_declarator_aux ::= variable_declarator:vd {: RESULT = vd; :} | variable_declarator variable_declarator_aux;
 variable_declarator ::= identifier:i {: RESULT = new Variavel(i.toString(), null, "variavel"); :} | identifier:i IGUAL variable_initializer:vi {: RESULT = new Variavel(i.toString(), vi.toString(), "variavel"); :};
 
 
-method_declaration ::= method_header:mh {: Verificador.addFuncao((new Funcao(((Variavel) mh).getNome(), ((Variavel) mh).getTipo(), new ArrayList<Variavel>(), "funcao"))); BlocoPrincipal.getInstance().iniciaBloco(mh.toString()); :} maybe_empty_block {: BlocoPrincipal.getInstance().finalizaBloco(); :};
-method_header ::= general_init_met_prop:gimp {: RESULT = gimp; :} LPAREN formal_parameter_list_aux:fpla {: Verificador.addParametro((Variavel) fpla); :} RPAREN;
+method_declaration ::= method_header:mh {: if (mh != null) { Verificador.addFuncao((new Funcao(((Variavel) mh).getNome(), ((Variavel) mh).getTipo(), new ArrayList<Variavel>(), "funcao"))); BlocoPrincipal.getInstance().iniciaBloco(((Variavel) mh).getNome()); } :} maybe_empty_block {: BlocoPrincipal.getInstance().finalizaBloco(); :};
+method_header ::= general_init_met_prop:gimp {: RESULT = gimp; :} LPAREN formal_parameter_list_aux:fpla {: if (fpla != null) { Verificador.addParametro((Variavel) fpla); } :} RPAREN;
 method_modifier ::= | NEW | PUBLIC | PROTECTED | INTERNAL | PRIVATE | STATIC | VIRTUAL | SEALED | OVERRIDE | ABSTRACT | EXTERN;
 maybe_empty_block ::= LCHAVE statement_aux RCHAVE | PONTOEVIRGULA;
 statement_aux ::= | statement statement_aux;
 statement ::= labeled_statement | declaration_statement | embedded_statement;
 labeled_statement ::= identifier DOISPONTOS statement;
 declaration_statement ::=  local_variable_declaration PONTOEVIRGULA |  local_constant_declaration PONTOEVIRGULA;
-local_variable_declaration ::= type:t variable_declarator_aux:vd {: if (vd != null) {Verificador.verificaTipo(t.toString(), (Variavel) vd);} :};
+local_variable_declaration ::= type:t variable_declarator_aux:vd {: if (vd != null && t != null) { Verificador.verificaTipo(t.toString(), (Variavel) vd);} :};
 local_constant_declaration ::= CONST type constant_declarator_aux;
 constant_declarator_aux ::= constant_declarator | constant_declarator constant_declarator_aux;
 constant_declarator ::= identifier IGUAL expression;
 embedded_statement ::= maybe_empty_block | statement_expression PONTOEVIRGULA | selection_statement | iteration_statement | jump_statement | try_statement | CHECKED block | UNCHECKED block | lock_statement | using_statement;
-statement_expression ::=  primary_expression:pe {: Verificador.addParametro(null); Verificador.verificarMetodo(pe.toString()); :} | NEW type LPAREN argument_list RPAREN | unary_expression:ue assignment_operator expression:e {: Verificador.verificaAtribuicao(ue.toString(), e.toString()); :} | primary_expression increment_decrement | increment_decrement primary_expression;
+statement_expression ::=  primary_expression:pe {: if (pe != null) { Verificador.verificarMetodo(pe.toString()); } :} | NEW type LPAREN argument_list RPAREN | unary_expression:ue assignment_operator expression:e {: if (ue != null && e != null){ Verificador.verificaAtribuicao(ue.toString(), e.toString()); } :} | primary_expression increment_decrement | increment_decrement primary_expression;
 selection_statement ::= if_statement | switch_statement;
 if_statement ::= IF LPAREN expression RPAREN embedded_statement else_part_opt;
 else_part_opt ::= | else_part;
@@ -299,7 +300,7 @@ switch_label ::= CASE expression DOISPONTOS | DEFAULT DOISPONTOS;
 iteration_statement ::= while_statement| do_statement | for_statement | foreach_statement;
 while_statement ::= WHILE LPAREN expression RPAREN embedded_statement;
 do_statement ::= DO embedded_statement WHILE LPAREN expression RPAREN PONTOEVIRGULA;
-for_statement ::= FOR LPAREN for_initializer PONTOEVIRGULA expression_opt:eo PONTOEVIRGULA statement_expression_list_opt RPAREN embedded_statement {: Verificador.verificarFor(eo.toString()); :};
+for_statement ::= FOR LPAREN for_initializer PONTOEVIRGULA expression_opt:eo PONTOEVIRGULA statement_expression_list_opt RPAREN embedded_statement {: if (eo != null){ Verificador.verificarFor(eo.toString()); } :};
 for_initializer ::= | local_variable_declaration | statement_expression_list;
 expression_opt ::= | expression:e {: RESULT = e; :};
 statement_expression_list_opt ::= | statement_expression_list;
@@ -348,10 +349,10 @@ general_init ::= general_modifier type_or_void:t {: RESULT = t; :};
 general_init_met_prop ::= general_init:t qualified_identifier:qi {: RESULT = new Variavel(qi.toString(), t.toString(), "variavel"); :};
 
 /*class*/
-class_declaration ::= attributes class_modifier CLASS identifier:i {: BlocoPrincipal.getInstance().iniciaBloco(i.toString()+";"); :} class_base_opt class_body ponto_virgula_opt;
-class_base_opt ::= | class_base;
+class_declaration ::= attributes class_modifier CLASS identifier:i class_base_opt:cbo {: if (i != null){ if (cbo != null){ BlocoPrincipal.getInstance().iniciaBloco((i.toString()+";"), cbo.toString());}else{BlocoPrincipal.getInstance().iniciaBloco((i.toString()+";"));}} :} class_body ponto_virgula_opt;
+class_base_opt ::= | class_base:cb {: RESULT = cb; :};
 class_modifier ::= | NEW | PUBLIC | PROTECTED | INTERNAL | PRIVATE | ABSTRACT | SEALED;
-class_base ::= DOISPONTOS qualified_identifier_list | DOISPONTOS built_in_class_type qualified_identifier_list_opt;
+class_base ::= DOISPONTOS qualified_identifier_list:qil {: RESULT = qil; :} | DOISPONTOS built_in_class_type qualified_identifier_list_opt;
 qualified_identifier_list_opt ::= | VIRGULA qualified_identifier_list;
 class_body ::= LCHAVE class_member_declaration_aux RCHAVE {: BlocoPrincipal.getInstance().finalizaBloco(); :};
 

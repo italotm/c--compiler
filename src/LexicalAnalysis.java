@@ -1160,7 +1160,7 @@ class LexicalAnalysis implements java_cup.runtime.Scanner {
           }
         case 145: break;
         case 5: 
-          { return symbol(sym.INTEGERLITERAL);
+          { return symbol(sym.INTEGERLITERAL, new Integer(yytext()));
           }
         case 146: break;
         case 6: 
@@ -1264,7 +1264,7 @@ class LexicalAnalysis implements java_cup.runtime.Scanner {
           }
         case 171: break;
         case 31: 
-          { return symbol(sym.REALLITERAL);
+          { return symbol(sym.REALLITERAL, new Double(yytext()));
           }
         case 172: break;
         case 32: 
@@ -1372,7 +1372,7 @@ class LexicalAnalysis implements java_cup.runtime.Scanner {
           }
         case 198: break;
         case 58: 
-          { return symbol(sym.CHARLITERAL);
+          { return symbol(sym.CHARLITERAL, new Character(yytext().charAt(1)));
           }
         case 199: break;
         case 59: 
