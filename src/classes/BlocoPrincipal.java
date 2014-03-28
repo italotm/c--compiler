@@ -35,9 +35,9 @@ public class BlocoPrincipal {
 		listaBlocos.add(bloco);
 	}
 	
-	public void iniciaBloco(String tipo, String heranca){
+	public void iniciaBloco(String tipo, String heranca) throws Exception{
 		if (!contemClasse(heranca)){
-			System.out.println("Classe " + heranca + " não declarada!");
+			throw new Exception("Classe " + heranca + " não declarada na linha " + Verificador.linha);
 		}
 		
 		contexto++;

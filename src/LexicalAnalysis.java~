@@ -1164,11 +1164,11 @@ class LexicalAnalysis implements java_cup.runtime.Scanner {
           }
         case 146: break;
         case 6: 
-          { return symbol(sym.MAIS);
+          { return symbol(sym.MAIS, new Integer(yyline));
           }
         case 147: break;
         case 7: 
-          { return symbol(sym.MENOS);
+          { return symbol(sym.MENOS, new Integer(yyline));
           }
         case 148: break;
         case 8: 
@@ -1204,7 +1204,7 @@ class LexicalAnalysis implements java_cup.runtime.Scanner {
           }
         case 156: break;
         case 16: 
-          { return symbol(sym.PONTOEVIRGULA);
+          { return symbol(sym.PONTOEVIRGULA, new Integer(yyline));
           }
         case 157: break;
         case 17: 

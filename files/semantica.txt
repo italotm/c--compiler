@@ -27,6 +27,7 @@ class teste {
 		imovel c = new casa();
 		imovel p = new apartamento();
 		int e = 3;
+		int r = 2 + 2;
 		c = new apartamento();
 		p = new imovel();
 	}

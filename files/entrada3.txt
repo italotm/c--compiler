@@ -20,7 +20,7 @@ namespace EnumApplication {
 		}
 			
 		static void Main(string[] args) { 
-			//novo num = 5;
+			int num = 3;
 			
 			if (num < 10){
 				num++;

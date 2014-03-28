@@ -61,7 +61,7 @@ string_literal = \"([^\\\"]|\\.)*\" | @\"([^\\\"]|\\.)*\"
 	"catch" { return symbol(sym.CATCH); }
 	"char" { return symbol(sym.CHAR); }
 	"checked" { return symbol(sym.CHECKED); }
-	"class" { return symbol(sym.CLASS); }
+	"class" { return symbol(sym.CLASS, new Integer(yyline)); }
 	"const" { return symbol(sym.CONST); }
 	"continue" { return symbol(sym.CONTINUE); }
 	"decimal" { return symbol(sym.DECIMAL); }
@@ -174,8 +174,8 @@ string_literal = \"([^\\\"]|\\.)*\" | @\"([^\\\"]|\\.)*\"
     "->"				{ return symbol(sym.PONTEIRO); }
 	"(" 				{ return symbol(sym.LPAREN, new Integer(yyline)); }
 	")" 				{ return symbol(sym.RPAREN); }
-	"-" 				{ return symbol(sym.MENOS); }
-	"+" 				{ return symbol(sym.MAIS); }
+	"-" 				{ return symbol(sym.MENOS, new Integer(yyline)); }
+	"+" 				{ return symbol(sym.MAIS, new Integer(yyline)); }
 	"/" 				{ return symbol(sym.BARRA); }	
 	"*" 				{ return symbol(sym.ASTERISCO); }
 	"assembly"			{ return symbol(sym.ASSEMBLY); }

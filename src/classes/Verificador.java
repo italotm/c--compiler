@@ -12,11 +12,15 @@ public class Verificador {
 		if (BlocoPrincipal.getInstance().contemClasse(tipo)){
 			if (!(variavel.getTipo().equals(tipo))){
 				Classe classe = BlocoPrincipal.getInstance().getClasse(variavel.getTipo());
-				if (!(classe.getHeranca().equals(tipo))){
+				if (classe.getHeranca() == null){
 					throw new Exception("Erro de tipo na linha "+ linha);
 				}else{
-					variavel.setTipo(classe.getHeranca());
-					BlocoPrincipal.getInstance().addBloco(variavel);
+					if (!(classe.getHeranca().equals(tipo))){
+						throw new Exception("Erro de tipo na linha "+ linha);
+					}else{
+						variavel.setTipo(classe.getHeranca());
+						BlocoPrincipal.getInstance().addBloco(variavel);
+					}
 				}
 			}else{
 				BlocoPrincipal.getInstance().addBloco(variavel);
@@ -206,6 +210,19 @@ public class Verificador {
 	public static void addParametro(Variavel var){
 		if (var != null){
 			listaAux.add(var);
+		}
+	}
+	
+	public static void verificarVariavelInteiro(String var, int linha) throws Exception{
+		Variavel varAux = BlocoPrincipal.getInstance().getVariavelContexto(var);
+		if (varAux == null){
+			if (!(var.equals("il"))){
+				throw new Exception("Erro de tipo na linha "+ linha);
+			}
+		}else{
+			if (!(varAux.getTipo().equals("il"))){
+				throw new Exception("Erro de tipo na linha "+ linha);
+			}
 		}
 	}
 }

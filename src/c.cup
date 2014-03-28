@@ -200,8 +200,8 @@ expression ::=
     expression:e1 expression_equality_operator:eeo expression:e2 {: if (e1 != null && e2 != null ){ Verificador.verificarIgualdade(e1.toString(), e2.toString(), ((int) eeo)+1); } RESULT = new String("bo"); :} |
     expression:e1 expression_relational_operator:ero expression:e2 {: if (e1 != null && e2 != null ){ Verificador.verificarRelacao(e1.toString(), e2.toString(), ((int) ero)+1); } RESULT = new String("bo"); :} |
     expression expression_shift_operator expression {: RESULT = new String("ns"); :} |
-    expression MAIS expression {: RESULT = new String("ns"); :} |
-    expression MENOS expression {: RESULT = new String("ns"); :} |
+    expression:e1 MAIS:m expression:e2 {: if (e1 != null && e2 != null ){ Verificador.verificarVariavelInteiro(e1.toString(), ((int) m)+1); Verificador.verificarVariavelInteiro(e2.toString(), ((int) m)+1); } RESULT = new String("il"); :} |
+    expression MENOS expression {: RESULT = new String("il"); :} |
     unary_expression:ue {: RESULT = ue; :} |
     unary_expression assignment_operator expression ;
 
@@ -350,7 +350,7 @@ general_init ::= general_modifier type_or_void:t {: RESULT = t; :};
 general_init_met_prop ::= general_init:t qualified_identifier:qi {: RESULT = new Variavel(qi.toString(), t.toString(), "variavel"); :};
 
 /*class*/
-class_declaration ::= attributes class_modifier CLASS identifier:i class_base_opt:cbo {: if (i != null){ if (cbo != null){ BlocoPrincipal.getInstance().iniciaBloco((i.toString()+";"), cbo.toString());}else{BlocoPrincipal.getInstance().iniciaBloco((i.toString()+";"));}} :} class_body ponto_virgula_opt;
+class_declaration ::= attributes class_modifier CLASS:c identifier:i class_base_opt:cbo {: Verificador.linha = ((int) c)+1; if (i != null){ if (cbo != null){ BlocoPrincipal.getInstance().iniciaBloco((i.toString()+";"), cbo.toString());}else{BlocoPrincipal.getInstance().iniciaBloco((i.toString()+";"));}} :} class_body ponto_virgula_opt;
 class_base_opt ::= | class_base:cb {: RESULT = cb; :};
 class_modifier ::= | NEW | PUBLIC | PROTECTED | INTERNAL | PRIVATE | ABSTRACT | SEALED;
 class_base ::= DOISPONTOS qualified_identifier_list:qil {: RESULT = qil; :} | DOISPONTOS built_in_class_type qualified_identifier_list_opt;
