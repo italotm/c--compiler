@@ -176,8 +176,8 @@ string_literal = \"([^\\\"]|\\.)*\" | @\"([^\\\"]|\\.)*\"
 	")" 				{ return symbol(sym.RPAREN); }
 	"-" 				{ return symbol(sym.MENOS, new Integer(yyline)); }
 	"+" 				{ return symbol(sym.MAIS, new Integer(yyline)); }
-	"/" 				{ return symbol(sym.BARRA); }	
-	"*" 				{ return symbol(sym.ASTERISCO); }
+	"/" 				{ return symbol(sym.BARRA, new Integer(yyline)); }	
+	"*" 				{ return symbol(sym.ASTERISCO, new Integer(yyline)); }
 	"assembly"			{ return symbol(sym.ASSEMBLY); }
 	"field"				{ return symbol(sym.FIELD); }
     "method"            { return symbol(sym.METHOD); }

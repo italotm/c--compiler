@@ -1144,11 +1144,11 @@ class LexicalAnalysis implements java_cup.runtime.Scanner {
 
       switch (zzAction < 0 ? zzAction : ZZ_ACTION[zzAction]) {
         case 1: 
-          { return symbol(sym.BARRA);
+          { return symbol(sym.BARRA, new Integer(yyline));
           }
         case 142: break;
         case 2: 
-          { return symbol(sym.ASTERISCO);
+          { return symbol(sym.ASTERISCO, new Integer(yyline));
           }
         case 143: break;
         case 3: 

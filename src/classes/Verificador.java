@@ -190,6 +190,8 @@ public class Verificador {
 						}
 					}
 				}
+			}else{
+				throw new Exception("Numero de parametros incorretos na linha " + linha);
 			}
 		}
 		listaAux.clear();

@@ -3,6 +3,7 @@ import classes.Verificador;
 import classes.BlocoPrincipal;
 import classes.Variavel;
 import classes.Funcao;
+import classes.GeracaoCodigo;
 import java.util.ArrayList;
 
 /*Este codigo foi reusado. Ele serve para nos mostrar aonde ocorreu um erro, ao ler um arquivo de entrada.*/
@@ -143,18 +144,18 @@ non_array_type::= qualified_identifier:qi {: RESULT = qi; :} | built_in_type:bit
 
 array_type ::= non_array_type | rank_specifier_optional;
 
-boolean_literal ::= TRUE | FALSE;
+boolean_literal ::= TRUE {: RESULT = new String("true"); :} | FALSE {: RESULT = new String("false"); :};
 integer_literal ::= INTEGERLITERAL:i {: RESULT = i; :};
 real_literal ::=  REALLITERAL;
 character_literal ::=  CHARLITERAL;
 string_literal ::=  STRINGLITERAL;
 null_literal ::= NULL;
-literal::= boolean_literal {: RESULT = new String("bo"); :} | integer_literal:il {: RESULT = (new String("il")); :} | real_literal  {: RESULT = new String("re"); :}| character_literal {: RESULT = new String("ch"); :} |string_literal {: RESULT = new String("st"); :} | null_literal {: RESULT = new String("null"); :};
+literal::= boolean_literal:bl {: GeracaoCodigo.getInstance().LD("#"+bl); RESULT = new String("bo"); :} | integer_literal:il {: GeracaoCodigo.getInstance().LD("#"+il); RESULT = (new String("il")); :} | real_literal  {: RESULT = new String("re"); :}| character_literal {: RESULT = new String("ch"); :} |string_literal {: RESULT = new String("st"); :} | null_literal {: RESULT = new String("null"); :};
 predefined_type ::= BOOL |BYTE |CHAR |DECIMAL |DOUBLE | FLOAT | INT | LONG | OBJECT | SBYTE | SHORT | STRING | UINT | ULONG |USHORT;
 
 argument_list::= argument_recursion_optional;
 argument_recursion_optional ::= | argument | argument VIRGULA argument_recursion_optional;
-argument::= identifier:i {: if (i != null){ Verificador.addParametro(new Variavel(i.toString(), null, "variavel"));} :} | expression:e {: if (e != null){ Verificador.addParametro(new Variavel(e.toString(), null, "variavel"));} :} | ref_or_out expression; 
+argument::= identifier:i {: if (i != null){ GeracaoCodigo.getInstance().push(i.toString()); Verificador.addParametro(new Variavel(i.toString(), null, "variavel"));} :} | expression:e {: if (e != null){ Verificador.addParametro(new Variavel(e.toString(), null, "variavel"));} :} | ref_or_out expression; 
 
 ref_or_out::= REF | OUT;
 increment_decrement ::= INCREMENTO | DECREMENTO;
@@ -165,13 +166,13 @@ type_or_void::= type:t {: RESULT = t; :} | VOID {: RESULT = new String("vo"); :}
 primary_expression ::= 
     NEW non_array_type LCOLCHETE expression_list RCOLCHETE rank_specifier_recursion_optional array_initializer_optional |
     NEW array_type array_initializer |
-    literal:l {: RESULT = l; :}|
-    identifier:i {: RESULT = i; :}|
+    literal:l {: RESULT = l; :} |
+    identifier:i {: if(i != null){ GeracaoCodigo.getInstance().push(i.toString()); GeracaoCodigo.getInstance().LD(i.toString());} RESULT = i; :}|
     identifier PONTO identifier|
     LPAREN expression RPAREN |
     primary_expression PONTO identifier |
     predefined_type PONTO identifier |
-    qualified_identifier:qi LPAREN:l {: Verificador.linha = ((int) l)+1; RESULT = qi; :} argument_list RPAREN |
+    qualified_identifier:qi LPAREN:l {: GeracaoCodigo.getInstance().iniciaMetodo(); Verificador.linha = ((int) l)+1; RESULT = qi; :} argument_list RPAREN {: if (qi != null){ GeracaoCodigo.getInstance().metodo(qi.toString());} :} |
     primary_expression LCOLCHETE expression_list RCOLCHETE |
     THIS |
     BASE PONTO identifier |
@@ -186,22 +187,21 @@ primary_expression ::=
 
 
 expression ::= 
-	identifier:i {: RESULT = i;  :} |
  	expression INTERROGACAO expression DOISPONTOS expression |
     expression ORPIPE expression {: RESULT = new String("bo"); :} | 
     expression ECOMERCIALDUPLO expression {: RESULT = new String("bo"); :} |
     expression CIRCUNFLEXO expression  {: RESULT = new String("ns"); :} |
     expression:e IS:is built_in_type:bit {: if (e != null){ Verificador.verificarVariavel(e.toString(), ((int) is)+1); } RESULT = new String("bo"); :} |
-    expression ASTERISCO expression {: RESULT = new String("ns"); :} |
-    expression BARRA expression {: RESULT = new String("ns"); :} |
+    expression:e1 ASTERISCO:a expression:e2 {: if (e1 != null && e2 != null ){ GeracaoCodigo.getInstance().multiplicacao(); Verificador.verificarVariavelInteiro(e1.toString(), ((int) a)+1); Verificador.verificarVariavelInteiro(e2.toString(), ((int) a)+1); } RESULT = new String("il"); :} |
+    expression:e1 BARRA:d expression:e2 {: if (e1 != null && e2 != null ){ GeracaoCodigo.getInstance().divisao(); Verificador.verificarVariavelInteiro(e1.toString(), ((int) d)+1); Verificador.verificarVariavelInteiro(e2.toString(), ((int) d)+1); } RESULT = new String("il"); :} |
     expression PERCENT expression {: RESULT = new String("ns"); :} |  
     expression PIPE expression {: RESULT = new String("ns"); :} |
     expression ECOMERCIAL expression {: RESULT = new String("ns"); :} |
     expression:e1 expression_equality_operator:eeo expression:e2 {: if (e1 != null && e2 != null ){ Verificador.verificarIgualdade(e1.toString(), e2.toString(), ((int) eeo)+1); } RESULT = new String("bo"); :} |
     expression:e1 expression_relational_operator:ero expression:e2 {: if (e1 != null && e2 != null ){ Verificador.verificarRelacao(e1.toString(), e2.toString(), ((int) ero)+1); } RESULT = new String("bo"); :} |
     expression expression_shift_operator expression {: RESULT = new String("ns"); :} |
-    expression:e1 MAIS:m expression:e2 {: if (e1 != null && e2 != null ){ Verificador.verificarVariavelInteiro(e1.toString(), ((int) m)+1); Verificador.verificarVariavelInteiro(e2.toString(), ((int) m)+1); } RESULT = new String("il"); :} |
-    expression MENOS expression {: RESULT = new String("il"); :} |
+    expression:e1 MAIS:m expression:e2 {: if (e1 != null && e2 != null ){ GeracaoCodigo.getInstance().soma(); Verificador.verificarVariavelInteiro(e1.toString(), ((int) m)+1); Verificador.verificarVariavelInteiro(e2.toString(), ((int) m)+1); } RESULT = new String("il"); :} |
+    expression:e1 MENOS:m expression:e2 {: if (e1 != null && e2 != null ){ GeracaoCodigo.getInstance().subtracao(); Verificador.verificarVariavelInteiro(e1.toString(), ((int) m)+1); Verificador.verificarVariavelInteiro(e2.toString(), ((int) m)+1); } RESULT = new String("il"); :} |
     unary_expression:ue {: RESULT = ue; :} |
     unary_expression assignment_operator expression ;
 
@@ -268,7 +268,7 @@ struct_member_declaration_aux ::= | struct_member_declaration struct_member_decl
 struct_member_declaration ::= constant_declaration | field_declaration | method_declaration | property_declaration | event_declaration;
 constant_declaration ::= general_modifier CONST type constant_declarator_aux PONTOEVIRGULA;
 constant_modifier ::= | NEW | PUBLIC | PROTECTED | INTERNAL | PRIVATE;
-field_declaration ::= general_init:gi variable_declarator_aux:vd PONTOEVIRGULA:pv {: Verificador.linha = ((int) pv)+1; if (vd != null && gi != null) { Verificador.verificaTipo(gi.toString(), (Variavel) vd);} :};
+field_declaration ::= general_init:gi variable_declarator_aux:vd PONTOEVIRGULA:pv {: Verificador.linha = ((int) pv)+1; if (vd != null && gi != null) { GeracaoCodigo.getInstance().field(gi.toString(), ((Variavel) vd).getNome()); Verificador.verificaTipo(gi.toString(), (Variavel) vd);} :};
 field_modifier ::= | NEW | PUBLIC | PROTECTED | INTERNAL | PRIVATE | STATIC | READONLY | VOLATILE;
 variable_declarator_aux ::= variable_declarator:vd {: RESULT = vd; :} | variable_declarator variable_declarator_aux;
 variable_declarator ::= identifier:i {: RESULT = new Variavel(i.toString(), null, "variavel"); :} | identifier:i IGUAL variable_initializer:vi {: RESULT = new Variavel(i.toString(), vi.toString(), "variavel"); :};
@@ -282,12 +282,12 @@ statement_aux ::= | statement statement_aux;
 statement ::= labeled_statement | declaration_statement | embedded_statement;
 labeled_statement ::= identifier DOISPONTOS statement;
 declaration_statement ::=  local_variable_declaration PONTOEVIRGULA:pv {: Verificador.linha = ((int) pv)+1; :} |  local_constant_declaration PONTOEVIRGULA;
-local_variable_declaration ::= type:t variable_declarator_aux:vd {: if (vd != null && t != null) { Verificador.verificaTipo(t.toString(), (Variavel) vd);} :};
+local_variable_declaration ::= type:t {: GeracaoCodigo.getInstance().iniciaAtribuicao(); :} variable_declarator_aux:vd {: if (vd != null && t != null) { GeracaoCodigo.getInstance().atribuicao(((Variavel) vd).getNome()); Verificador.verificaTipo(t.toString(), (Variavel) vd);} :};
 local_constant_declaration ::= CONST type constant_declarator_aux;
 constant_declarator_aux ::= constant_declarator | constant_declarator constant_declarator_aux;
 constant_declarator ::= identifier IGUAL expression;
 embedded_statement ::= maybe_empty_block | statement_expression PONTOEVIRGULA | selection_statement | iteration_statement | jump_statement | try_statement | CHECKED block | UNCHECKED block | lock_statement | using_statement;
-statement_expression ::=  primary_expression:pe {: if (pe != null) { Verificador.verificarMetodo(pe.toString()); } :} | NEW type LPAREN argument_list RPAREN | unary_expression:ue assignment_operator:ao expression:e {: if (ue != null && e != null){ Verificador.verificaAtribuicao(ue.toString(), e.toString(), ((int) ao)+1); } :} | primary_expression increment_decrement | increment_decrement primary_expression;
+statement_expression ::=  primary_expression:pe {: if (pe != null) { Verificador.verificarMetodo(pe.toString()); } :} | NEW type LPAREN argument_list RPAREN | unary_expression:ue {: GeracaoCodigo.getInstance().iniciaAtribuicao(); :} assignment_operator:ao expression:e {: if (ue != null && e != null){ GeracaoCodigo.getInstance().atribuicao(ue.toString());  Verificador.verificaAtribuicao(ue.toString(), e.toString(), ((int) ao)+1); } :} | primary_expression increment_decrement | increment_decrement primary_expression;
 selection_statement ::= if_statement | switch_statement;
 if_statement ::= IF LPAREN expression RPAREN embedded_statement else_part_opt;
 else_part_opt ::= | else_part;
