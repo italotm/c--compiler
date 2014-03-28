@@ -194,5 +194,5 @@ string_literal = \"([^\\\"]|\\.)*\" | @\"([^\\\"]|\\.)*\"
 	{integer_literal}    { return symbol(sym.INTEGERLITERAL, new Integer(yytext())); }
 	{real_literal}    { return symbol(sym.REALLITERAL, new Double(yytext())); }
 	{char_literal}    { return symbol(sym.CHARLITERAL, new Character(yytext().charAt(1))); }
-	{string_literal}    { return symbol(sym.STRINGLITERAL); }
+	{string_literal}    { return symbol(sym.STRINGLITERAL, new String(yytext())); }
 	<<EOF>> { return symbol(sym.EOF); }

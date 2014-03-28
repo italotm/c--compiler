@@ -4,11 +4,12 @@ class teste {
 	bool r;
 	string a;
 	
-	public int metodo(int i, bool g){}
+	public int metodo(int i, bool g, string j){}
 	
 	public string novoMetodo(string b, int c){
-		metodo(y, r);
-		/*int h = 3;
+		a = "dsds";
+		/*int i = metodo(metodo(), r, a);
+		int h = 3;
 		y = 3 + 6;
 		y = 5 - 7;
 		y = 3 * 8;

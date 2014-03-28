@@ -29,6 +29,20 @@ public class GeracaoCodigo {
 		atribuicao = false;
 	}
 	
+	public void atribuicao(Variavel var){
+		if (var.getTipo() != null){
+			Funcao funcao = BlocoPrincipal.getInstance().getFuncaoContexto(var.getTipo());
+			if (funcao != null){
+				System.out.println("ST " + var.getNome() + ", EAX");
+			}else{
+				System.out.println("ST " + var.getNome() + ", R" + reg);
+			}
+		}else{
+			System.out.println("ST " + var.getNome() + ", R" + reg);
+		}
+		atribuicao = false;
+	}
+	
 	public void LD(String var){
 		if (atribuicao){
 			reg++;
@@ -65,12 +79,12 @@ public class GeracaoCodigo {
 	}
 	
 	public void iniciaMetodo(){
-		metodo = true;
+		metodo = !metodo;
 	}
 	
 	public void metodo(String nome){
 		System.out.println("CALL " + nome);
-		metodo = false;
+		metodo = !metodo;
 	}
 	
 	public void push(String var){

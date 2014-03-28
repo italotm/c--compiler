@@ -1308,7 +1308,7 @@ class LexicalAnalysis implements java_cup.runtime.Scanner {
           }
         case 182: break;
         case 42: 
-          { return symbol(sym.STRINGLITERAL);
+          { return symbol(sym.STRINGLITERAL, new String(yytext()));
           }
         case 183: break;
         case 43: 
