@@ -5,9 +5,10 @@ public class Main {
 		try {
 			LexicalAnalysis scanner = new LexicalAnalysis( new java.io.FileReader(args[0]) );
 			parser p = new parser(scanner);
-			System.out.println(p.parse());
+			p.parse();
+			System.out.println("Compilou com sucesso!");
 		} catch (Exception e) {	
-			System.out.println(e);
+			System.err.println(e.getMessage());
 		}
 	}
 

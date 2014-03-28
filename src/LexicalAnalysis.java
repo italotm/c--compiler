@@ -1204,7 +1204,7 @@ class LexicalAnalysis implements java_cup.runtime.Scanner {
           }
         case 156: break;
         case 16: 
-          { return symbol(sym.PONTOEVIRGULA);
+          { return symbol(sym.PONTOEVIRGULA, new Integer(yyline));
           }
         case 157: break;
         case 17: 
@@ -1228,15 +1228,15 @@ class LexicalAnalysis implements java_cup.runtime.Scanner {
           }
         case 162: break;
         case 22: 
-          { return symbol(sym.IGUAL);
+          { return symbol(sym.IGUAL, new Integer(yyline));
           }
         case 163: break;
         case 23: 
-          { return symbol(sym.MENOR);
+          { return symbol(sym.MENOR, new Integer(yyline));
           }
         case 164: break;
         case 24: 
-          { return symbol(sym.MAIOR);
+          { return symbol(sym.MAIOR, new Integer(yyline));
           }
         case 165: break;
         case 25: 
@@ -1244,7 +1244,7 @@ class LexicalAnalysis implements java_cup.runtime.Scanner {
           }
         case 166: break;
         case 26: 
-          { return symbol(sym.LPAREN);
+          { return symbol(sym.LPAREN, new Integer(yyline));
           }
         case 167: break;
         case 27: 
@@ -1272,7 +1272,7 @@ class LexicalAnalysis implements java_cup.runtime.Scanner {
           }
         case 173: break;
         case 33: 
-          { return symbol(sym.AS);
+          { return symbol(sym.AS, new Integer(yyline));
           }
         case 174: break;
         case 34: 
@@ -1320,7 +1320,7 @@ class LexicalAnalysis implements java_cup.runtime.Scanner {
           }
         case 185: break;
         case 45: 
-          { return symbol(sym.IS);
+          { return symbol(sym.IS, new Integer(yyline));
           }
         case 186: break;
         case 46: 
@@ -1340,15 +1340,15 @@ class LexicalAnalysis implements java_cup.runtime.Scanner {
           }
         case 190: break;
         case 50: 
-          { return symbol(sym.DIFERENTE);
+          { return symbol(sym.DIFERENTE, new Integer(yyline));
           }
         case 191: break;
         case 51: 
-          { return symbol(sym.IGUALIGUAL);
+          { return symbol(sym.IGUALIGUAL, new Integer(yyline));
           }
         case 192: break;
         case 52: 
-          { return symbol(sym.MENORIGUAL);
+          { return symbol(sym.MENORIGUAL, new Integer(yyline));
           }
         case 193: break;
         case 53: 
@@ -1356,7 +1356,7 @@ class LexicalAnalysis implements java_cup.runtime.Scanner {
           }
         case 194: break;
         case 54: 
-          { return symbol(sym.MAIORIGUAL);
+          { return symbol(sym.MAIORIGUAL, new Integer(yyline));
           }
         case 195: break;
         case 55: 
@@ -1368,7 +1368,7 @@ class LexicalAnalysis implements java_cup.runtime.Scanner {
           }
         case 197: break;
         case 57: 
-          { return symbol(sym.FOR);
+          { return symbol(sym.FOR, new Integer(yyline));
           }
         case 198: break;
         case 58: 

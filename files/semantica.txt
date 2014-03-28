@@ -26,7 +26,7 @@ class teste {
 	public int polimorfismo(){
 		imovel c = new casa();
 		imovel p = new apartamento();
-		int e = 4;
+		int e = 3;
 		c = new apartamento();
 		p = new imovel();
 	}
@@ -46,10 +46,11 @@ class teste {
 		bool j = 5 > 4;
 		bool h = a == "ss";
 		
-		for (int g = 5; 3 < 4; a = "ssd") {
+		for (int g = 5; bo; a = "ssd") {
 			string t = "teste";
 		}
 		
+		novoMetodo("sdsd", polimorfismo());
 		a = novoMetodo("sdsd", polimorfismo());
 	}
 }

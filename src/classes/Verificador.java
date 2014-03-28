@@ -6,13 +6,14 @@ import java.util.List;
 public class Verificador {
 	
 	public static List<Variavel> listaAux = new ArrayList<Variavel>();
+	public static int linha = 0;
 	
-	public static void verificaTipo(String tipo, Variavel variavel){
+	public static void verificaTipo(String tipo, Variavel variavel) throws Exception{
 		if (BlocoPrincipal.getInstance().contemClasse(tipo)){
 			if (!(variavel.getTipo().equals(tipo))){
 				Classe classe = BlocoPrincipal.getInstance().getClasse(variavel.getTipo());
 				if (!(classe.getHeranca().equals(tipo))){
-					System.out.println("Erro de tipo1!");
+					throw new Exception("Erro de tipo na linha "+ linha);
 				}else{
 					variavel.setTipo(classe.getHeranca());
 					BlocoPrincipal.getInstance().addBloco(variavel);
@@ -36,35 +37,40 @@ public class Verificador {
 								variavel.setTipo(tipo);
 								BlocoPrincipal.getInstance().addBloco(variavel);
 							}else{
-								System.out.println("Erro de tipo2!");
+								throw new Exception("Erro de tipo na linha "+ linha);
 							}
 						}else{
-							if (BlocoPrincipal.getInstance().getFuncaoContexto(variavel.getTipo()).getRetorno().equals(tipo)){
-								variavel.setTipo(tipo);
-								BlocoPrincipal.getInstance().addBloco(variavel);
+							Funcao funcao = BlocoPrincipal.getInstance().getFuncaoContexto(variavel.getTipo());
+							if (funcao != null){
+								if (funcao.getRetorno().equals(tipo)){
+									variavel.setTipo(tipo);
+									BlocoPrincipal.getInstance().addBloco(variavel);
+								}else{
+									throw new Exception("Erro de tipo na linha "+ linha);
+								}
 							}else{
-								System.out.println("Erro de tipo3!");
+								throw new Exception("Erro de tipo na linha "+ linha);
 							}
 						}
 					}
 				}else{
-					System.out.println("Erro de tipo4!");
+					throw new Exception("Erro de tipo na linha "+ linha);
 				}
 			}else{
 				if (!(tipo.equals(variavel.getTipo()))){
-					System.out.println("Tipo não Declarado");
+					throw new Exception("Erro de tipo na linha "+ linha);
 				}
 			}
 		}
 	}
 	
-	public static void verificaAtribuicao(String var1, String var2){
+	public static void verificaAtribuicao(String var1, String var2, int linha) throws Exception{
 		Variavel variavel1 = BlocoPrincipal.getInstance().getVariavelContexto(var1);
 		Variavel variavel2 = BlocoPrincipal.getInstance().getVariavelContexto(var2);
 		Funcao funcao = BlocoPrincipal.getInstance().getFuncaoContexto(var2);
 		
 		if (variavel1 == null){
-			System.out.println("Variavel não declarada");
+			throw new Exception("Variavel não declarada na linha "+ linha);
 		}else{
 			if (variavel2 == null){
 				if (funcao == null){
@@ -73,34 +79,34 @@ public class Verificador {
 
 						if (classe != null){
 							if (!(classe.getNome().equals(variavel1.getTipo()) || classe.getHeranca().equals(variavel1.getTipo()))){
-								System.out.println("Erro de tipo5!");
+								throw new Exception("Erro de tipo na linha "+ linha);
 							}
 						}else{
-							System.out.println("Erro de tipo6!");
+							throw new Exception("Erro de tipo na linha "+ linha);
 						}
 					}
 				}else{
 					if (!(variavel1.getTipo().equals(funcao.getRetorno()))){
-						System.out.println("Erro de tipo7!");
+						throw new Exception("Variavel não declarada na linha "+ linha);
 					}else{
 						verificarMetodo(var2);
 					}
 				}
 			}else{
 				if (!(variavel1.getTipo().equals(variavel2.getTipo()))){
-					System.out.println("Erro de tipo8!");
+					throw new Exception("Erro de tipo na linha "+ linha);
 				}
 			}
 		}
 	}
 	
-	public static void verificarVariavel(String var){
+	public static void verificarVariavel(String var, int linha) throws Exception{
 		if (BlocoPrincipal.getInstance().getVariavelContexto(var) == null){
-			System.out.println("Variavel não declarada");
+			throw new Exception("Variavel não declarada na linha "+ linha);
 		}
 	}
 	
-	public static void verificarRelacao(String var1, String var2){
+	public static void verificarRelacao(String var1, String var2, int linha) throws Exception{
 		String var1_aux = var1;
 		Variavel variavel1 = BlocoPrincipal.getInstance().getVariavelContexto(var1);
 		
@@ -109,8 +115,7 @@ public class Verificador {
 		}
 		
 		if (!(var1_aux.equals("il") || var1_aux.equals("fl") || var1_aux.equals("lo") || var1_aux.equals("de") || var1_aux.equals("do") || var1_aux.equals("ch"))){
-			System.out.println("Erro de tipo");
-			return;
+			throw new Exception("Erro de tipo na linha "+ linha);
 		}
 		
 		
@@ -122,16 +127,15 @@ public class Verificador {
 		}
 		
 		if (!(var2_aux.equals("il") || var2_aux.equals("fl") || var2_aux.equals("lo") || var2_aux.equals("de") || var2_aux.equals("do") || var2_aux.equals("ch"))){
-			System.out.println("Erro de tipo9");
-			return;
+			throw new Exception("Erro de tipo na linha "+ linha);
 		}
 		
 		if (!(var1_aux.equals(var2_aux))){
-			System.out.println("Erro de tipo10!");
+			throw new Exception("Erro de tipo na linha "+ linha);
 		}
 	}
 	
-	public static void verificarIgualdade(String var1, String var2){
+	public static void verificarIgualdade(String var1, String var2, int linha) throws Exception{
 		String var1_aux = var1;
 		Variavel variavel1 = BlocoPrincipal.getInstance().getVariavelContexto(var1);
 		String var2_aux = var2;
@@ -146,20 +150,21 @@ public class Verificador {
 		}
 		
 		if (!(var1_aux.equals(var2_aux))){
-			System.out.println("Erro de tipo11!");
+			throw new Exception("Erro de tipo na linha "+ linha);
 		}
 	}
 	
-	public static void verificarFor(String exp){
+	public static void verificarFor(String exp, int linha) throws Exception{
 		if (!(exp.equals("bo"))){
-			System.out.println("Erro de tipo12!");
+			throw new Exception("Erro de tipo na linha "+ linha);
 		}
 	}
 	
-	public static void verificarMetodo(String exp){
+	public static void verificarMetodo(String exp) throws Exception{
 		Funcao funcao = BlocoPrincipal.getInstance().getFuncaoContexto(exp);
+		
 		if (funcao == null){
-			System.out.println("Funcao nao declarada!");
+			throw new Exception("Funcao nao declarada na linha " + linha);
 		}else{
 			if (funcao.getParametros().size() == listaAux.size()){
 				for (int i = 0; i < listaAux.size(); i++) {
@@ -167,16 +172,16 @@ public class Verificador {
 						Variavel varAux = BlocoPrincipal.getInstance().getVariavelContexto(listaAux.get(i).getNome());
 						if (varAux != null){
 							if (!(varAux.getTipo().equals(funcao.getParametros().get(i).getTipo()))){
-								System.out.println("Erro tipo!");
+								throw new Exception("Erro de tipo na linha "+ linha);
 							}
 						}else{
 							Funcao f = BlocoPrincipal.getInstance().getFuncaoContexto(listaAux.get(i).getNome());
 							if (f != null){
 								if (!(f.getRetorno().equals(funcao.getParametros().get(i).getTipo()))){
-									System.out.println("Erro de tipo13!");
+									throw new Exception("Erro de tipo na linha "+ linha);
 								}
 							}else{
-								System.out.println("Erro de tipo14!");
+								throw new Exception("Erro de tipo na linha "+ linha);
 							}
 						}
 					}
@@ -186,13 +191,13 @@ public class Verificador {
 		listaAux.clear();
 	}
 	
-	public static void addFuncao(Funcao funcao){
+	public static void addFuncao(Funcao funcao) throws Exception{
 		for (Variavel var : listaAux) {
 			funcao.addParametro(var);
 		}
 		listaAux.clear();
 		if (BlocoPrincipal.getInstance().getFuncaoContexto(funcao.getNome()) != null){
-			System.out.println("Funcao ja declarada!");
+			throw new Exception("Funcao ja declarada na linha " + linha);
 		}else{
 			BlocoPrincipal.getInstance().addBloco(funcao);
 		}

@@ -52,7 +52,7 @@ string_literal = \"([^\\\"]|\\.)*\" | @\"([^\\\"]|\\.)*\"
 %%
 /*Aqui estao definidos os possiveis tokens que podem ser encontrados numa calculadora simples*/
 	"abstract" { return symbol(sym.ABSTRACT); }
-	"as" { return symbol(sym.AS); }
+	"as" { return symbol(sym.AS, new Integer(yyline)); }
 	"base" { return symbol(sym.BASE); }
 	"bool" { return symbol(sym.BOOL); }
 	"break" { return symbol(sym.BREAK); }
@@ -78,7 +78,7 @@ string_literal = \"([^\\\"]|\\.)*\" | @\"([^\\\"]|\\.)*\"
 	"finally" { return symbol(sym.FINALLY); }
 	"fixed" { return symbol(sym.FIXED); }
 	"float" { return symbol(sym.FLOAT); }
-	"for" { return symbol(sym.FOR); }
+	"for" { return symbol(sym.FOR, new Integer(yyline)); }
 	"foreach" { return symbol(sym.FOREACH); }
 	"goto" { return symbol(sym.GOTO); }
 	"if" { return symbol(sym.IF); }
@@ -87,7 +87,7 @@ string_literal = \"([^\\\"]|\\.)*\" | @\"([^\\\"]|\\.)*\"
 	"int" { return symbol(sym.INT); }
 	"interface" { return symbol(sym.INTERFACE); }
 	"internal" { return symbol(sym.INTERNAL); }
-	"is" { return symbol(sym.IS); }
+	"is" { return symbol(sym.IS, new Integer(yyline)); }
 	"lock" { return symbol(sym.LOCK); }
 	"long" { return symbol(sym.LONG); }
 	"namespace" { return symbol(sym.NAMESPACE); }
@@ -140,16 +140,16 @@ string_literal = \"([^\\\"]|\\.)*\" | @\"([^\\\"]|\\.)*\"
     "."					{ return symbol(sym.PONTO); }
     ","					{ return symbol(sym.VIRGULA); }
     ":"					{ return symbol(sym.DOISPONTOS); }
-    ";"					{ return symbol(sym.PONTOEVIRGULA); }
+    ";"					{ return symbol(sym.PONTOEVIRGULA, new Integer(yyline)); }
     "%"					{ return symbol(sym.PERCENT); }
     "&"					{ return symbol(sym.ECOMERCIAL); }
     "|"					{ return symbol(sym.PIPE); }
     "^"					{ return symbol(sym.CIRCUNFLEXO); }
     "!"					{ return symbol(sym.EXCLAMACAO); }
     "~"					{ return symbol(sym.TIO); }
-    "="					{ return symbol(sym.IGUAL); }
-    "<"					{ return symbol(sym.MENOR); }
-    ">"					{ return symbol(sym.MAIOR); }
+    "="					{ return symbol(sym.IGUAL, new Integer(yyline)); }
+    "<"					{ return symbol(sym.MENOR, new Integer(yyline)); }
+    ">"					{ return symbol(sym.MAIOR, new Integer(yyline)); }
     "?"					{ return symbol(sym.INTERROGACAO); }
     "++"				{ return symbol(sym.INCREMENTO); }
     "--"				{ return symbol(sym.DECREMENTO); }
@@ -157,10 +157,10 @@ string_literal = \"([^\\\"]|\\.)*\" | @\"([^\\\"]|\\.)*\"
     "||"				{ return symbol(sym.ORPIPE); }
     "<<"				{ return symbol(sym.MENORMENOR); }
     ">>"				{ return symbol(sym.MAIORMAIOR); }
-    "=="				{ return symbol(sym.IGUALIGUAL); }
-    "!="				{ return symbol(sym.DIFERENTE); }
-    "<="				{ return symbol(sym.MENORIGUAL); }
-    ">="				{ return symbol(sym.MAIORIGUAL); }
+    "=="				{ return symbol(sym.IGUALIGUAL, new Integer(yyline)); }
+    "!="				{ return symbol(sym.DIFERENTE, new Integer(yyline)); }
+    "<="				{ return symbol(sym.MENORIGUAL, new Integer(yyline)); }
+    ">="				{ return symbol(sym.MAIORIGUAL, new Integer(yyline)); }
     "+="				{ return symbol(sym.MAISIGUAL); }
     "-="				{ return symbol(sym.MENOSIGUAL); }
     "*="				{ return symbol(sym.VEZESIGUAL); }
@@ -172,7 +172,7 @@ string_literal = \"([^\\\"]|\\.)*\" | @\"([^\\\"]|\\.)*\"
     "<<="				{ return symbol(sym.MENORMENORIGUAL); }
     ">>="				{ return symbol(sym.MAIORMAIORIGUAL); }
     "->"				{ return symbol(sym.PONTEIRO); }
-	"(" 				{ return symbol(sym.LPAREN); }
+	"(" 				{ return symbol(sym.LPAREN, new Integer(yyline)); }
 	")" 				{ return symbol(sym.RPAREN); }
 	"-" 				{ return symbol(sym.MENOS); }
 	"+" 				{ return symbol(sym.MAIS); }
