@@ -5,12 +5,15 @@ public class GeracaoCodigo {
 	private static GeracaoCodigo instance;
 	private int reg;
 	private boolean atribuicao;
-	private boolean metodo;
+	private boolean metodo, flagFor;
+	private int label;
 	
 	private GeracaoCodigo(){
 		reg = -1;
 		atribuicao = false;
 		metodo = false;
+		label = 0;
+		flagFor = false;
 	}
 	
 	public static GeracaoCodigo getInstance(){
@@ -25,7 +28,7 @@ public class GeracaoCodigo {
 	}
 	
 	public void atribuicao(String var){
-		System.out.println("ST " + var + ", R" + reg);
+		System.out.println("ST " + var + ", R" + reg+ "\n");
 		atribuicao = false;
 	}
 	
@@ -33,12 +36,12 @@ public class GeracaoCodigo {
 		if (var.getTipo() != null){
 			Funcao funcao = BlocoPrincipal.getInstance().getFuncaoContexto(var.getTipo());
 			if (funcao != null){
-				System.out.println("ST " + var.getNome() + ", EAX");
+				System.out.println("ST " + var.getNome() + ", EAX"+ "\n");
 			}else{
-				System.out.println("ST " + var.getNome() + ", R" + reg);
+				System.out.println("ST " + var.getNome() + ", R" + reg+ "\n");
 			}
 		}else{
-			System.out.println("ST " + var.getNome() + ", R" + reg);
+			System.out.println("ST " + var.getNome() + ", R" + reg+ "\n");
 		}
 		atribuicao = false;
 	}
@@ -75,7 +78,7 @@ public class GeracaoCodigo {
 		}
 		reg++;
 		System.out.println("LD R" + reg + ", " + tipoAux);
-		System.out.println("ST " + var + ", R" + reg);
+		System.out.println("ST " + var + ", R" + reg + "\n");
 	}
 	
 	public void iniciaMetodo(){
@@ -91,5 +94,28 @@ public class GeracaoCodigo {
 		if (metodo){
 			System.out.println("PUSH " + var);
 		}
+	}
+	
+	public void declaraMetodo(String nome){
+		System.out.println(".global " + nome);
+		System.out.println(nome+":"+ "\n");
+	}
+	
+	public void incremento(String var, String opt){
+		reg++;
+		System.out.println("LD R" + reg + ", " + var);
+		
+		if (opt.equals("mais")){
+			System.out.println("ADD R" + reg + ", R" + reg + ", #1");
+		}else{
+			System.out.println("SUB R" + reg + ", R" + reg + ", #1");
+		}
+		System.out.println("ST " + var + ", R" + reg);
+	}
+	
+	public void iniciaFor(){
+		flagFor = true;
+		System.out.println("label_for"+label+":\n");
+		label++;
 	}
 }

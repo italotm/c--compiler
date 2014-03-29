@@ -119,9 +119,9 @@ expression_shift_operator::= MENORMENOR | MAIORMAIOR;
 
 assignment_operator::= IGUAL:ig {: RESULT = ig; :} | MAISIGUAL:ma {: RESULT = ma; :} | MENOSIGUAL:me {: RESULT = me; :} | VEZESIGUAL:ve {: RESULT = ve; :} | DIVIDEIGUAL:di {: RESULT = di; :} | PERCENTIGUAL:pe {: RESULT = pe; :} | ECOMERCIALIGUAL:ec {: RESULT = ec; :} | PIPEIGUAL:pi {: RESULT = pi; :} | TIOIGUAL:ti {: RESULT = ti; :} | MENORMENORIGUAL:me {: RESULT = me; :} | MAIORMAIORIGUAL:ma {: RESULT = ma; :};
 
-expression_unary_operator ::= MAIS | MENOS | DECREMENTO | INCREMENTO | EXCLAMACAO | TIO | ASTERISCO;
+expression_unary_operator ::= MAIS | MENOS | DECREMENTO {: System.out.println("olha o incremeasasatno"); :} | INCREMENTO {: System.out.println("olha o incremeasasatno"); :} | EXCLAMACAO | TIO | ASTERISCO;
     
-unary_expression::= expression_unary_operator unary_expression | LPAREN type RPAREN unary_expression | primary_expression:pe {: RESULT = pe; :};
+unary_expression::= expression_unary_operator {: System.out.println("olha o incremetno"); :} unary_expression | LPAREN type RPAREN unary_expression | primary_expression:pe {: RESULT = pe; :};
 
 virgula_recursion_aux ::= | VIRGULA | VIRGULA virgula_recursion_aux;
 virgula_optional ::= | VIRGULA; 
@@ -158,7 +158,7 @@ argument_recursion_optional ::= | argument | argument VIRGULA argument_recursion
 argument::= identifier:i {: if (i != null){ GeracaoCodigo.getInstance().push(i.toString()); Verificador.addParametro(new Variavel(i.toString(), null, "variavel"));} :} | expression:e {: if (e != null){ Verificador.addParametro(new Variavel(e.toString(), null, "variavel"));} :} | ref_or_out expression; 
 
 ref_or_out::= REF | OUT;
-increment_decrement ::= INCREMENTO | DECREMENTO;
+increment_decrement ::= INCREMENTO {: RESULT = new String("mais"); :} | DECREMENTO {: RESULT = new String("menos"); :};
 type ::= non_array_type:nat {: RESULT = nat; :} rank_specifier_recursion_optional;
 
 type_or_void::= type:t {: RESULT = t; :} | VOID {: RESULT = new String("vo"); :};
@@ -177,7 +177,8 @@ primary_expression ::=
     THIS |
     BASE PONTO identifier |
     BASE LCOLCHETE expression_list RCOLCHETE |
-    primary_expression increment_decrement |
+    INCREMENTO primary_expression |
+    primary_expression:pe increment_decrement:id {: if (pe != null && id != null){ GeracaoCodigo.getInstance().incremento(pe.toString(), id.toString());} :} |
     NEW type:t {: RESULT = t; :} LPAREN argument_list RPAREN |
     TYPEOF LPAREN type_or_void RPAREN |
     CHECKED LPAREN expression RPAREN |
@@ -274,7 +275,7 @@ variable_declarator_aux ::= variable_declarator:vd {: RESULT = vd; :} | variable
 variable_declarator ::= identifier:i {: RESULT = new Variavel(i.toString(), null, "variavel"); :} | identifier:i IGUAL variable_initializer:vi {: RESULT = new Variavel(i.toString(), vi.toString(), "variavel"); :};
 
 
-method_declaration ::= method_header:mh {: if (mh != null) { Verificador.addFuncao((new Funcao(((Variavel) mh).getNome(), ((Variavel) mh).getTipo(), new ArrayList<Variavel>(), "funcao"))); BlocoPrincipal.getInstance().iniciaBloco(((Variavel) mh).getNome()); } :} maybe_empty_block {: BlocoPrincipal.getInstance().finalizaBloco(); :};
+method_declaration ::= method_header:mh {: if (mh != null) { GeracaoCodigo.getInstance().declaraMetodo(((Variavel) mh).getNome()); Verificador.addFuncao((new Funcao(((Variavel) mh).getNome(), ((Variavel) mh).getTipo(), new ArrayList<Variavel>(), "funcao"))); BlocoPrincipal.getInstance().iniciaBloco(((Variavel) mh).getNome()); } :} maybe_empty_block {: BlocoPrincipal.getInstance().finalizaBloco(); :};
 method_header ::= general_init_met_prop:gimp LPAREN:l {: Verificador.linha = ((int) l)+1; RESULT = gimp; :} formal_parameter_list_aux:fpla {: if (fpla != null) { Verificador.addParametro((Variavel) fpla); } :} RPAREN;
 method_modifier ::= | NEW | PUBLIC | PROTECTED | INTERNAL | PRIVATE | STATIC | VIRTUAL | SEALED | OVERRIDE | ABSTRACT | EXTERN;
 maybe_empty_block ::= LCHAVE statement_aux RCHAVE | PONTOEVIRGULA;
@@ -287,7 +288,7 @@ local_constant_declaration ::= CONST type constant_declarator_aux;
 constant_declarator_aux ::= constant_declarator | constant_declarator constant_declarator_aux;
 constant_declarator ::= identifier IGUAL expression;
 embedded_statement ::= maybe_empty_block | statement_expression PONTOEVIRGULA | selection_statement | iteration_statement | jump_statement | try_statement | CHECKED block | UNCHECKED block | lock_statement | using_statement;
-statement_expression ::=  primary_expression:pe {: if (pe != null) { Verificador.verificarMetodo(pe.toString()); } :} | NEW type LPAREN argument_list RPAREN | unary_expression:ue {: GeracaoCodigo.getInstance().iniciaAtribuicao(); :} assignment_operator:ao expression:e {: if (ue != null && e != null){ GeracaoCodigo.getInstance().atribuicao(ue.toString());  Verificador.verificaAtribuicao(ue.toString(), e.toString(), ((int) ao)+1); } :} | primary_expression increment_decrement | increment_decrement primary_expression;
+statement_expression ::=  primary_expression:pe {: if (pe != null) { Verificador.verificarMetodo(pe.toString()); } :} | NEW type LPAREN argument_list RPAREN | unary_expression:ue {: GeracaoCodigo.getInstance().iniciaAtribuicao(); :} assignment_operator:ao expression:e {: if (ue != null && e != null){ GeracaoCodigo.getInstance().atribuicao(ue.toString());  Verificador.verificaAtribuicao(ue.toString(), e.toString(), ((int) ao)+1); } :} | primary_expression increment_decrement {: System.out.println("agora sim"); :} | increment_decrement primary_expression {: System.out.println("agora sim2"); :};
 selection_statement ::= if_statement | switch_statement;
 if_statement ::= IF LPAREN expression RPAREN embedded_statement else_part_opt;
 else_part_opt ::= | else_part;
@@ -301,7 +302,7 @@ switch_label ::= CASE expression DOISPONTOS | DEFAULT DOISPONTOS;
 iteration_statement ::= while_statement| do_statement | for_statement | foreach_statement;
 while_statement ::= WHILE LPAREN expression RPAREN embedded_statement;
 do_statement ::= DO embedded_statement WHILE LPAREN expression RPAREN PONTOEVIRGULA;
-for_statement ::= FOR:f LPAREN for_initializer PONTOEVIRGULA expression_opt:eo PONTOEVIRGULA statement_expression_list_opt RPAREN embedded_statement {: if (eo != null){ Verificador.verificarFor(eo.toString(), ((int) f)+1); } :};
+for_statement ::= FOR:f {: GeracaoCodigo.getInstance().iniciaFor(); :} LPAREN for_initializer PONTOEVIRGULA expression_opt:eo PONTOEVIRGULA statement_expression_list_opt RPAREN embedded_statement {: if (eo != null){ Verificador.verificarFor(eo.toString(), ((int) f)+1); } :};
 for_initializer ::= | local_variable_declaration | statement_expression_list;
 expression_opt ::= | expression:e {: RESULT = e; :};
 statement_expression_list_opt ::= | statement_expression_list;
