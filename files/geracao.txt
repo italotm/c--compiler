@@ -16,8 +16,9 @@ class teste {
 		y = 3 * 8;
 		y = 4 / 2;
 		r = true;*/
-		
-		for(int i=0; i < 10; i--){
+		r = 2 < 3;
+		for(int i=0; i > 10; i--){
+			y = 3 * 8;
 		}
 	}
 }

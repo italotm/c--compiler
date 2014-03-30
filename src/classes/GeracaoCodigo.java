@@ -2,11 +2,16 @@ package classes;
 
 public class GeracaoCodigo {
 	
+	public static String relacao = "";
 	private static GeracaoCodigo instance;
 	private int reg;
 	private boolean atribuicao;
 	private boolean metodo, flagFor;
 	private int label;
+	private String incrementoFor;
+	private String condicaoFor;
+	private boolean exprFor;
+	private String result;
 	
 	private GeracaoCodigo(){
 		reg = -1;
@@ -14,6 +19,10 @@ public class GeracaoCodigo {
 		metodo = false;
 		label = 0;
 		flagFor = false;
+		incrementoFor = "";
+		condicaoFor = "";
+		exprFor = false;
+		result = "";
 	}
 	
 	public static GeracaoCodigo getInstance(){
@@ -23,12 +32,16 @@ public class GeracaoCodigo {
 		return instance;
 	}
 	
+	public String getCodigo(){
+		return result;
+	}
+	
 	public void iniciaAtribuicao(){
 		atribuicao = true;
 	}
 	
 	public void atribuicao(String var){
-		System.out.println("ST " + var + ", R" + reg+ "\n");
+		result += "ST " + var + ", R" + reg+ "\n\n";
 		atribuicao = false;
 	}
 	
@@ -36,37 +49,41 @@ public class GeracaoCodigo {
 		if (var.getTipo() != null){
 			Funcao funcao = BlocoPrincipal.getInstance().getFuncaoContexto(var.getTipo());
 			if (funcao != null){
-				System.out.println("ST " + var.getNome() + ", EAX"+ "\n");
+				result += "ST " + var.getNome() + ", EAX"+ "\n\n";
 			}else{
-				System.out.println("ST " + var.getNome() + ", R" + reg+ "\n");
+				result += "ST " + var.getNome() + ", R" + reg+ "\n\n";
 			}
 		}else{
-			System.out.println("ST " + var.getNome() + ", R" + reg+ "\n");
+			result += "ST " + var.getNome() + ", R" + reg+ "\n\n";
 		}
 		atribuicao = false;
 	}
 	
 	public void LD(String var){
-		if (atribuicao){
+		if ((atribuicao || flagFor) && !exprFor){
 			reg++;
-			System.out.println("LD R" + reg + ", " + var);
+			result += "LD R" + reg + ", " + var + "\n";
+			
+			if (flagFor){
+				condicaoFor += "LD R" + reg + ", " + var + "\n";
+			}
 		}
 	}
 	
 	public void soma(){
-		System.out.println("ADD R" + (reg) + ", R" + reg + ", R" + (reg-1));
+		result += "ADD R" + (reg) + ", R" + reg + ", R" + (reg-1) + "\n";
 	}
 	
 	public void subtracao(){
-		System.out.println("SUB R" + reg + ", R" + reg + ", R" + (reg-1));
+		result += "SUB R" + reg + ", R" + reg + ", R" + (reg-1) + "\n";
 	}
 	
 	public void divisao(){
-		System.out.println("DIV R" + (reg) + ", R" + reg + ", R" + (reg-1));
+		result += "DIV R" + (reg) + ", R" + reg + ", R" + (reg-1) + "\n";
 	}
 	
 	public void multiplicacao(){
-		System.out.println("MUL R" + (reg) + ", R" + reg + ", R" + (reg-1));
+		result += "MUL R" + (reg) + ", R" + reg + ", R" + (reg-1) + "\n";
 	}
 	
 	public void field(String tipo, String var){
@@ -77,8 +94,8 @@ public class GeracaoCodigo {
 			tipoAux = "#false";
 		}
 		reg++;
-		System.out.println("LD R" + reg + ", " + tipoAux);
-		System.out.println("ST " + var + ", R" + reg + "\n");
+		result += "LD R" + reg + ", " + tipoAux + "\n";
+		result += "ST " + var + ", R" + reg + "\n\n";
 	}
 	
 	public void iniciaMetodo(){
@@ -86,36 +103,85 @@ public class GeracaoCodigo {
 	}
 	
 	public void metodo(String nome){
-		System.out.println("CALL " + nome);
+		result += "CALL " + nome + "\n";
 		metodo = !metodo;
 	}
 	
 	public void push(String var){
 		if (metodo){
-			System.out.println("PUSH " + var);
+			result += "PUSH " + var + "\n";
 		}
 	}
 	
 	public void declaraMetodo(String nome){
-		System.out.println(".global " + nome);
-		System.out.println(nome+":"+ "\n");
+		result += ".global " + nome + "\n";
+		result += nome+":"+ "\n\n";
 	}
 	
 	public void incremento(String var, String opt){
 		reg++;
-		System.out.println("LD R" + reg + ", " + var);
 		
-		if (opt.equals("mais")){
-			System.out.println("ADD R" + reg + ", R" + reg + ", #1");
+		if (flagFor){
+			incrementoFor = "LD R" + reg + ", " + var + "\n";
+			if (opt.equals("mais")){
+				incrementoFor += "ADD R" + reg + ", R" + reg + ", #1" + "\n";
+			}else{
+				incrementoFor += "SUB R" + reg + ", R" + reg + ", #1" + "\n";
+			}
+			incrementoFor += "ST " + var + ", R" + reg + "\n";
+			
 		}else{
-			System.out.println("SUB R" + reg + ", R" + reg + ", #1");
+			result += "LD R" + reg + ", " + var + "\n";
+			
+			if (opt.equals("mais")){
+				result += "ADD R" + reg + ", R" + reg + ", #1" + "\n";
+			}else{
+				result += "SUB R" + reg + ", R" + reg + ", #1" + "\n";
+			}
+			result += "ST " + var + ", R" + reg + "\n";
 		}
-		System.out.println("ST " + var + ", R" + reg);
 	}
 	
 	public void iniciaFor(){
+		result += ".INICIA_FOR:\n\n";
+	}
+	
+	public void loopFor(){
+		flagFor = false;
+		exprFor = false;
+		result += ".LF"+label+":\n\n";
+		label++;
+	}
+	
+	public void exp(){
 		flagFor = true;
-		System.out.println("label_for"+label+":\n");
+	}
+	
+	public void expressaoFor(){
+		if (flagFor){
+			exprFor = true;
+			if (relacao.equals("menor")){
+				result += "SUB R" + reg + ", R" + reg + ", R" + (reg-1) + "\n";
+				result += "BGEZ R" + reg + ", .L" + (label+1) + "\n\n"; //condicao contraria
+				condicaoFor += "SUB R" + reg + ", R" + reg + ", R" + (reg-1) + "\n";
+				condicaoFor += "BLTZ R" + reg + ", .LF" + (label) + "\n"; //condicao certa
+			}else if (relacao.equals("maior")){
+				result += "SUB R" + reg + ", R" + reg + ", R" + (reg-1) + "\n";
+				result += "BLEZ R" + reg + ", .L" + (label+1) + "\n\n"; //condicao contraria
+				condicaoFor += "SUB R" + reg + ", R" + reg + ", R" + (reg-1) + "\n";
+				condicaoFor += "BGTZ R" + reg + ", .LF" + (label) + "\n"; //condicao certa
+			}
+		}
+	}
+	
+	public void finalizaFor(){
+		result += incrementoFor + "\n";
+		result += condicaoFor + "\n";
+		result += ".L"+label+":\n\n";
+		incrementoFor = "";
+		condicaoFor = ""; 
 		label++;
 	}
 }
+
+

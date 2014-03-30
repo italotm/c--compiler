@@ -113,7 +113,7 @@ expression_list ::= expression | expression VIRGULA expression_list;
 
 expression_equality_operator::= IGUALIGUAL:ii {: RESULT = ii; :} | DIFERENTE:di {: RESULT = di; :};
 
-expression_relational_operator::= MENOR:me {: RESULT = me; :} | MAIOR:ma {: RESULT = ma; :} | MENORIGUAL:mei {: RESULT = mei; :} | MAIORIGUAL:mai {: RESULT = mai; :} | IS:is {: RESULT = is; :} | AS:as {: RESULT = as; :};
+expression_relational_operator::= MENOR:me {: GeracaoCodigo.relacao = "menor"; RESULT = me; :} | MAIOR:ma {: GeracaoCodigo.relacao = "maior"; RESULT = ma; :} | MENORIGUAL:mei {: GeracaoCodigo.relacao = "menorigual"; RESULT = mei; :} | MAIORIGUAL:mai {: GeracaoCodigo.relacao = "maiorigual"; RESULT = mai; :} | IS:is {: RESULT = is; :} | AS:as {: RESULT = as; :};
 
 expression_shift_operator::= MENORMENOR | MAIORMAIOR;
 
@@ -199,7 +199,7 @@ expression ::=
     expression PIPE expression {: RESULT = new String("ns"); :} |
     expression ECOMERCIAL expression {: RESULT = new String("ns"); :} |
     expression:e1 expression_equality_operator:eeo expression:e2 {: if (e1 != null && e2 != null ){ Verificador.verificarIgualdade(e1.toString(), e2.toString(), ((int) eeo)+1); } RESULT = new String("bo"); :} |
-    expression:e1 expression_relational_operator:ero expression:e2 {: if (e1 != null && e2 != null ){ Verificador.verificarRelacao(e1.toString(), e2.toString(), ((int) ero)+1); } RESULT = new String("bo"); :} |
+    expression:e1 expression_relational_operator:ero expression:e2 {: if (e1 != null && e2 != null ){ GeracaoCodigo.getInstance().expressaoFor(); Verificador.verificarRelacao(e1.toString(), e2.toString(), ((int) ero)+1); } RESULT = new String("bo"); :} |
     expression expression_shift_operator expression {: RESULT = new String("ns"); :} |
     expression:e1 MAIS:m expression:e2 {: if (e1 != null && e2 != null ){ GeracaoCodigo.getInstance().soma(); Verificador.verificarVariavelInteiro(e1.toString(), ((int) m)+1); Verificador.verificarVariavelInteiro(e2.toString(), ((int) m)+1); } RESULT = new String("il"); :} |
     expression:e1 MENOS:m expression:e2 {: if (e1 != null && e2 != null ){ GeracaoCodigo.getInstance().subtracao(); Verificador.verificarVariavelInteiro(e1.toString(), ((int) m)+1); Verificador.verificarVariavelInteiro(e2.toString(), ((int) m)+1); } RESULT = new String("il"); :} |
@@ -302,7 +302,7 @@ switch_label ::= CASE expression DOISPONTOS | DEFAULT DOISPONTOS;
 iteration_statement ::= while_statement| do_statement | for_statement | foreach_statement;
 while_statement ::= WHILE LPAREN expression RPAREN embedded_statement;
 do_statement ::= DO embedded_statement WHILE LPAREN expression RPAREN PONTOEVIRGULA;
-for_statement ::= FOR:f {: GeracaoCodigo.getInstance().iniciaFor(); :} LPAREN for_initializer PONTOEVIRGULA expression_opt:eo PONTOEVIRGULA statement_expression_list_opt RPAREN embedded_statement {: if (eo != null){ Verificador.verificarFor(eo.toString(), ((int) f)+1); } :};
+for_statement ::= FOR:f {: GeracaoCodigo.getInstance().iniciaFor(); :} LPAREN for_initializer PONTOEVIRGULA {: GeracaoCodigo.getInstance().exp(); :} expression_opt:eo PONTOEVIRGULA statement_expression_list_opt RPAREN {: GeracaoCodigo.getInstance().loopFor(); :} embedded_statement {: if (eo != null){ GeracaoCodigo.getInstance().finalizaFor(); Verificador.verificarFor(eo.toString(), ((int) f)+1); } :};
 for_initializer ::= | local_variable_declaration | statement_expression_list;
 expression_opt ::= | expression:e {: RESULT = e; :};
 statement_expression_list_opt ::= | statement_expression_list;
