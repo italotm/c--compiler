@@ -170,6 +170,110 @@ public class GeracaoCodigo {
 				result += "BLEZ R" + reg + ", .L" + (label+1) + "\n\n"; //condicao contraria
 				condicaoFor += "SUB R" + reg + ", R" + reg + ", R" + (reg-1) + "\n";
 				condicaoFor += "BGTZ R" + reg + ", .LF" + (label) + "\n"; //condicao certa
+			}else if (relacao.equals("maiorigual")){
+				result += "SUB R" + reg + ", R" + reg + ", R" + (reg-1) + "\n";
+				result += "BLTZ R" + reg + ", .L" + (label+1) + "\n\n"; //condicao contraria
+				condicaoFor += "SUB R" + reg + ", R" + reg + ", R" + (reg-1) + "\n";
+				condicaoFor += "BGEZ R" + reg + ", .LF" + (label) + "\n"; //condicao certa
+			}else if (relacao.equals("menorigual")){
+				result += "SUB R" + reg + ", R" + reg + ", R" + (reg-1) + "\n";
+				result += "BGTZ R" + reg + ", .L" + (label+1) + "\n\n"; //condicao contraria
+				condicaoFor += "SUB R" + reg + ", R" + reg + ", R" + (reg-1) + "\n";
+				condicaoFor += "BLEZ R" + reg + ", .LF" + (label) + "\n"; //condicao certa
+			}else if (relacao.equals("igual")){
+				result += "BNE R" + (reg-1) + ", R" + reg + ", .L" + (label+1) + "\n\n"; //condicao contraria
+				condicaoFor += "BEQ R" + (reg-1) + ", R" + reg + ", .LF" + (label) + "\n"; //condicao certa
+			}else if (relacao.equals("diferente")){
+				result += "BEQ R" + (reg-1) + ", R" + reg + ", .L" + (label+1) + "\n\n"; //condicao contraria
+				condicaoFor += "BNE R" + (reg-1) + ", R" + reg + ", .LF" + (label) + "\n"; //condicao certa
+			}else if (relacao.equals("and")){
+				result += "AND R" + reg + ", R" + (reg-1) + ", .LF" + (label) + "\n\n";
+				condicaoFor += "AND R" + reg + ", R" + (reg-1) + ", .LF" + (label) + "\n\n";
+			}else if (relacao.equals("or")){
+				result += "OR R" + reg + ", R" + (reg-1) + ", .LF" + (label) + "\n\n";
+				condicaoFor += "OR R" + reg + ", R" + (reg-1) + ", .LF" + (label) + "\n\n";
+			}
+		}else{
+			if (relacao.equals("menor")){
+				result += "SUB R" + reg + ", R" + reg + ", R" + (reg-1) + "\n";
+				result += "BLTZ R" + reg + ", .L" + (label) + "\n";
+				reg++;
+				result += "LD R" + reg + ", #false\n";
+				result += "BRA .L" + (label+1) + "\n";
+				result += ".L" + label + ":\n";
+				label++;
+				result += "LD R" + reg + ", #true\n";
+				result += ".L" + label + ":\n";
+				label++;
+			}else if (relacao.equals("maior")){
+				result += "SUB R" + reg + ", R" + reg + ", R" + (reg-1) + "\n";
+				result += "BGTZ R" + reg + ", .L" + (label) + "\n";
+				reg++;
+				result += "LD R" + reg + ", #false\n";
+				result += "BRA .L" + (label+1) + "\n";
+				result += ".L" + label + ":\n";
+				label++;
+				result += "LD R" + reg + ", #true\n";
+				result += ".L" + label + ":\n";
+				label++;
+			}else if (relacao.equals("maiorigual")){
+				result += "SUB R" + reg + ", R" + reg + ", R" + (reg-1) + "\n";
+				result += "BGEZ R" + reg + ", .L" + (label) + "\n";
+				reg++;
+				result += "LD R" + reg + ", #false\n";
+				result += "BRA .L" + (label+1) + "\n";
+				result += ".L" + label + ":\n";
+				label++;
+				result += "LD R" + reg + ", #true\n";
+				result += ".L" + label + ":\n";
+				label++;
+			}else if (relacao.equals("menorigual")){
+				result += "SUB R" + reg + ", R" + reg + ", R" + (reg-1) + "\n";
+				result += "BLEZ R" + reg + ", .L" + (label) + "\n";
+				reg++;
+				result += "LD R" + reg + ", #false\n";
+				result += "BRA .L" + (label+1) + "\n";
+				result += ".L" + label + ":\n";
+				label++;
+				result += "LD R" + reg + ", #true\n";
+				result += ".L" + label + ":\n";
+				label++;
+			}else if (relacao.equals("igual")){
+				result += "BEQ R" + (reg-1) + ", R" + reg + ", .L" + (label) + "\n";
+				reg++;
+				result += "LD R" + reg + ", #false\n";
+				result += "BRA .L" + (label+1) + "\n";
+				result += ".L" + label + ":\n";
+				label++;
+				result += "LD R" + reg + ", #true\n";
+				result += ".L" + label + ":\n";
+			}else if (relacao.equals("diferente")){
+				result += "BNE R" + (reg-1) + ", R" + reg + ", .L" + (label) + "\n";
+				reg++;
+				result += "LD R" + reg + ", #false\n";
+				result += "BRA .L" + (label+1) + "\n";
+				result += ".L" + label + ":\n";
+				label++;
+				result += "LD R" + reg + ", #true\n";
+				result += ".L" + label + ":\n";
+			}else if (relacao.equals("and")){
+				result += "AND R" + (reg-1) + ", R" + reg + ", .L" + (label) + "\n";
+				reg++;
+				result += "LD R" + reg + ", #false\n";
+				result += "BRA .L" + (label+1) + "\n";
+				result += ".L" + label + ":\n";
+				label++;
+				result += "LD R" + reg + ", #true\n";
+				result += ".L" + label + ":\n";
+			}else if (relacao.equals("or")){
+				result += "OR R" + (reg-1) + ", R" + reg + ", .L" + (label) + "\n";
+				reg++;
+				result += "LD R" + reg + ", #false\n";
+				result += "BRA .L" + (label+1) + "\n";
+				result += ".L" + label + ":\n";
+				label++;
+				result += "LD R" + reg + ", #true\n";
+				result += ".L" + label + ":\n";
 			}
 		}
 	}
