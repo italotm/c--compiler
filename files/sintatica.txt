@@ -16,23 +16,35 @@ namespace EnumApplication {
 		enum Days { Sun, Mon, tue, Wed, thu, Fri, Sat }; 
 		
 		public int duplica(int num){
-			return num*2;
+			return num;
 		}
 			
 		static void Main(string[] args) { 
 			int num = 3;
 			
-			if (num < 10){
+			if (num < num){
 				num++;
 			}else{
 				num--;
 			}
 			
-			while (a) {
-				while (boo2){
-					if (a) {
-						a = 3;
-					}
+			while (10 || num) {
+				while (num || 10){
+					try{
+						if (num && num) {
+							switch (num){
+								case 3: 
+									int a = 2;
+									break; 
+								case 1: 
+									int b = 7;
+									break;  
+								default: 
+									string c = "";
+									break; 
+							}
+						}
+					}catch(exception){}
 				}
 			}
 			

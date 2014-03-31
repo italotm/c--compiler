@@ -80,7 +80,7 @@ get_accessor_declaration_opt, get_accessor_declaration, set_accessor_declaration
 event_accessor_declarations, add_accessor_declaration, remove_accessor_declaration, class_declaration, class_base_opt,
 class_modifier, class_base, qualified_identifier_list_opt, class_body, class_member_declaration_aux, class_member_declaration,
 general_modifier, general_init, general_init_met_prop, modifier, constructor_declaration, constructor_declarator,
-constructor_initializer_opt, constructor_initializer;
+constructor_initializer_opt, constructor_initializer, expression_iteration;
 
 /*Aqui estao as regras de producao*/
 
@@ -185,6 +185,88 @@ primary_expression ::=
     UNCHECKED LPAREN expression RPAREN;
 
 
+expression_iteration ::=
+	identifier INTERROGACAO literal DOISPONTOS identifier |
+    identifier ORPIPE {: GeracaoCodigo.relacao = "or"; :} literal {: GeracaoCodigo.getInstance().expressaoFor(); RESULT = new String("bo"); :} | 
+    identifier ECOMERCIALDUPLO {: GeracaoCodigo.relacao = "and"; :} literal {: GeracaoCodigo.getInstance().expressaoFor(); RESULT = new String("bo"); :} |
+    identifier CIRCUNFLEXO literal  {: RESULT = new String("ns"); :} |
+    identifier:e IS:is built_in_type:bit {: if (e != null){ Verificador.verificarVariavel(e.toString(), ((int) is)+1); } RESULT = new String("bo"); :} |
+    identifier:e1 ASTERISCO:a literal:e2 {: if (e1 != null && e2 != null ){ GeracaoCodigo.getInstance().multiplicacao(); Verificador.verificarVariavelInteiro(e1.toString(), ((int) a)+1); Verificador.verificarVariavelInteiro(e2.toString(), ((int) a)+1); } RESULT = new String("il"); :} |
+    identifier:e1 BARRA:d literal:e2 {: if (e1 != null && e2 != null ){ GeracaoCodigo.getInstance().divisao(); Verificador.verificarVariavelInteiro(e1.toString(), ((int) d)+1); Verificador.verificarVariavelInteiro(e2.toString(), ((int) d)+1); } RESULT = new String("il"); :} |
+    identifier PERCENT literal {: RESULT = new String("ns"); :} |  
+    identifier PIPE literal {: RESULT = new String("ns"); :} |
+    identifier ECOMERCIAL literal {: RESULT = new String("ns"); :} |
+    identifier:e1 expression_equality_operator:eeo literal:e2 {: if (e1 != null && e2 != null ){ GeracaoCodigo.getInstance().expressaoFor(); Verificador.verificarIgualdade(e1.toString(), e2.toString(), ((int) eeo)+1); } RESULT = new String("bo"); :} |
+    identifier:e1 expression_relational_operator:ero literal:e2 {: if (e1 != null && e2 != null ){ GeracaoCodigo.getInstance().expressaoFor(); Verificador.verificarRelacao(e1.toString(), e2.toString(), ((int) ero)+1); } RESULT = new String("bo"); :} |
+    identifier expression_shift_operator literal {: RESULT = new String("ns"); :} |
+    identifier:e1 MAIS:m literal:e2 {: if (e1 != null && e2 != null ){ GeracaoCodigo.getInstance().soma(); Verificador.verificarVariavelInteiro(e1.toString(), ((int) m)+1); Verificador.verificarVariavelInteiro(e2.toString(), ((int) m)+1); } RESULT = new String("il"); :} |
+    identifier:e1 MENOS:m literal:e2 {: if (e1 != null && e2 != null ){ GeracaoCodigo.getInstance().subtracao(); Verificador.verificarVariavelInteiro(e1.toString(), ((int) m)+1); Verificador.verificarVariavelInteiro(e2.toString(), ((int) m)+1); } RESULT = new String("il"); :} |
+
+	literal INTERROGACAO identifier DOISPONTOS identifier |
+    literal ORPIPE {: GeracaoCodigo.relacao = "or"; :} identifier {: GeracaoCodigo.getInstance().expressaoFor(); RESULT = new String("bo"); :} | 
+    literal ECOMERCIALDUPLO {: GeracaoCodigo.relacao = "and"; :} identifier {: GeracaoCodigo.getInstance().expressaoFor(); RESULT = new String("bo"); :} |
+    literal CIRCUNFLEXO identifier  {: RESULT = new String("ns"); :} |
+    literal:e IS:is built_in_type:bit {: if (e != null){ Verificador.verificarVariavel(e.toString(), ((int) is)+1); } RESULT = new String("bo"); :} |
+    literal:e1 ASTERISCO:a identifier:e2 {: if (e1 != null && e2 != null ){ GeracaoCodigo.getInstance().multiplicacao(); Verificador.verificarVariavelInteiro(e1.toString(), ((int) a)+1); Verificador.verificarVariavelInteiro(e2.toString(), ((int) a)+1); } RESULT = new String("il"); :} |
+    literal:e1 BARRA:d identifier:e2 {: if (e1 != null && e2 != null ){ GeracaoCodigo.getInstance().divisao(); Verificador.verificarVariavelInteiro(e1.toString(), ((int) d)+1); Verificador.verificarVariavelInteiro(e2.toString(), ((int) d)+1); } RESULT = new String("il"); :} |
+    literal PERCENT identifier {: RESULT = new String("ns"); :} |  
+    literal PIPE identifier {: RESULT = new String("ns"); :} |
+    literal ECOMERCIAL identifier {: RESULT = new String("ns"); :} |
+    literal:e1 expression_equality_operator:eeo identifier:e2 {: if (e1 != null && e2 != null ){ GeracaoCodigo.getInstance().expressaoFor(); Verificador.verificarIgualdade(e1.toString(), e2.toString(), ((int) eeo)+1); } RESULT = new String("bo"); :} |
+    literal:e1 expression_relational_operator:ero identifier:e2 {: if (e1 != null && e2 != null ){ GeracaoCodigo.getInstance().expressaoFor(); Verificador.verificarRelacao(e1.toString(), e2.toString(), ((int) ero)+1); } RESULT = new String("bo"); :} |
+    literal expression_shift_operator identifier {: RESULT = new String("ns"); :} |
+    literal:e1 MAIS:m identifier:e2 {: if (e1 != null && e2 != null ){ GeracaoCodigo.getInstance().soma(); Verificador.verificarVariavelInteiro(e1.toString(), ((int) m)+1); Verificador.verificarVariavelInteiro(e2.toString(), ((int) m)+1); } RESULT = new String("il"); :} |
+    literal:e1 MENOS:m identifier:e2 {: if (e1 != null && e2 != null ){ GeracaoCodigo.getInstance().subtracao(); Verificador.verificarVariavelInteiro(e1.toString(), ((int) m)+1); Verificador.verificarVariavelInteiro(e2.toString(), ((int) m)+1); } RESULT = new String("il"); :} |
+
+	literal INTERROGACAO literal DOISPONTOS literal |
+    literal ORPIPE {: GeracaoCodigo.relacao = "or"; :} literal {: GeracaoCodigo.getInstance().expressaoFor(); RESULT = new String("bo"); :} | 
+    literal ECOMERCIALDUPLO {: GeracaoCodigo.relacao = "and"; :} literal {: GeracaoCodigo.getInstance().expressaoFor(); RESULT = new String("bo"); :} |
+    literal CIRCUNFLEXO literal  {: RESULT = new String("ns"); :} |
+    literal:e IS:is built_in_type:bit {: if (e != null){ Verificador.verificarVariavel(e.toString(), ((int) is)+1); } RESULT = new String("bo"); :} |
+    literal:e1 ASTERISCO:a literal:e2 {: if (e1 != null && e2 != null ){ GeracaoCodigo.getInstance().multiplicacao(); Verificador.verificarVariavelInteiro(e1.toString(), ((int) a)+1); Verificador.verificarVariavelInteiro(e2.toString(), ((int) a)+1); } RESULT = new String("il"); :} |
+    literal:e1 BARRA:d literal:e2 {: if (e1 != null && e2 != null ){ GeracaoCodigo.getInstance().divisao(); Verificador.verificarVariavelInteiro(e1.toString(), ((int) d)+1); Verificador.verificarVariavelInteiro(e2.toString(), ((int) d)+1); } RESULT = new String("il"); :} |
+    literal PERCENT literal {: RESULT = new String("ns"); :} |  
+    literal PIPE literal {: RESULT = new String("ns"); :} |
+    literal ECOMERCIAL literal {: RESULT = new String("ns"); :} |
+    literal:e1 expression_equality_operator:eeo literal:e2 {: if (e1 != null && e2 != null ){ GeracaoCodigo.getInstance().expressaoFor(); Verificador.verificarIgualdade(e1.toString(), e2.toString(), ((int) eeo)+1); } RESULT = new String("bo"); :} |
+    literal:e1 expression_relational_operator:ero literal:e2 {: if (e1 != null && e2 != null ){ GeracaoCodigo.getInstance().expressaoFor(); Verificador.verificarRelacao(e1.toString(), e2.toString(), ((int) ero)+1); } RESULT = new String("bo"); :} |
+    literal expression_shift_operator literal {: RESULT = new String("ns"); :} |
+    literal:e1 MAIS:m literal:e2 {: if (e1 != null && e2 != null ){ GeracaoCodigo.getInstance().soma(); Verificador.verificarVariavelInteiro(e1.toString(), ((int) m)+1); Verificador.verificarVariavelInteiro(e2.toString(), ((int) m)+1); } RESULT = new String("il"); :} |
+    literal:e1 MENOS:m literal:e2 {: if (e1 != null && e2 != null ){ GeracaoCodigo.getInstance().subtracao(); Verificador.verificarVariavelInteiro(e1.toString(), ((int) m)+1); Verificador.verificarVariavelInteiro(e2.toString(), ((int) m)+1); } RESULT = new String("il"); :} |
+ 
+	identifier INTERROGACAO identifier DOISPONTOS identifier |
+    identifier ORPIPE {: GeracaoCodigo.relacao = "or"; :} identifier {: GeracaoCodigo.getInstance().expressaoFor(); RESULT = new String("bo"); :} | 
+    identifier ECOMERCIALDUPLO {: GeracaoCodigo.relacao = "and"; :} identifier {: GeracaoCodigo.getInstance().expressaoFor(); RESULT = new String("bo"); :} |
+    identifier CIRCUNFLEXO identifier  {: RESULT = new String("ns"); :} |
+    identifier:e IS:is built_in_type:bit {: if (e != null){ Verificador.verificarVariavel(e.toString(), ((int) is)+1); } RESULT = new String("bo"); :} |
+    identifier:e1 ASTERISCO:a identifier:e2 {: if (e1 != null && e2 != null ){ GeracaoCodigo.getInstance().multiplicacao(); Verificador.verificarVariavelInteiro(e1.toString(), ((int) a)+1); Verificador.verificarVariavelInteiro(e2.toString(), ((int) a)+1); } RESULT = new String("il"); :} |
+    identifier:e1 BARRA:d identifier:e2 {: if (e1 != null && e2 != null ){ GeracaoCodigo.getInstance().divisao(); Verificador.verificarVariavelInteiro(e1.toString(), ((int) d)+1); Verificador.verificarVariavelInteiro(e2.toString(), ((int) d)+1); } RESULT = new String("il"); :} |
+    identifier PERCENT identifier {: RESULT = new String("ns"); :} |  
+    identifier PIPE identifier {: RESULT = new String("ns"); :} |
+    identifier ECOMERCIAL identifier {: RESULT = new String("ns"); :} |
+    identifier:e1 expression_equality_operator:eeo identifier:e2 {: if (e1 != null && e2 != null ){ GeracaoCodigo.getInstance().expressaoFor(); Verificador.verificarIgualdade(e1.toString(), e2.toString(), ((int) eeo)+1); } RESULT = new String("bo"); :} |
+    identifier:e1 expression_relational_operator:ero identifier:e2 {: if (e1 != null && e2 != null ){ GeracaoCodigo.getInstance().expressaoFor(); Verificador.verificarRelacao(e1.toString(), e2.toString(), ((int) ero)+1); } RESULT = new String("bo"); :} |
+    identifier expression_shift_operator identifier {: RESULT = new String("ns"); :} |
+    identifier:e1 MAIS:m identifier:e2 {: if (e1 != null && e2 != null ){ GeracaoCodigo.getInstance().soma(); Verificador.verificarVariavelInteiro(e1.toString(), ((int) m)+1); Verificador.verificarVariavelInteiro(e2.toString(), ((int) m)+1); } RESULT = new String("il"); :} |
+    identifier:e1 MENOS:m identifier:e2 {: if (e1 != null && e2 != null ){ GeracaoCodigo.getInstance().subtracao(); Verificador.verificarVariavelInteiro(e1.toString(), ((int) m)+1); Verificador.verificarVariavelInteiro(e2.toString(), ((int) m)+1); } RESULT = new String("il"); :} |
+
+ 	expression INTERROGACAO expression DOISPONTOS expression |
+    expression ORPIPE {: GeracaoCodigo.relacao = "or"; :} expression {: GeracaoCodigo.getInstance().expressaoFor(); RESULT = new String("bo"); :} | 
+    expression ECOMERCIALDUPLO {: GeracaoCodigo.relacao = "and"; :} expression {: GeracaoCodigo.getInstance().expressaoFor(); RESULT = new String("bo"); :} |
+    expression CIRCUNFLEXO expression  {: RESULT = new String("ns"); :} |
+    expression:e IS:is built_in_type:bit {: if (e != null){ Verificador.verificarVariavel(e.toString(), ((int) is)+1); } RESULT = new String("bo"); :} |
+    expression:e1 ASTERISCO:a expression:e2 {: if (e1 != null && e2 != null ){ GeracaoCodigo.getInstance().multiplicacao(); Verificador.verificarVariavelInteiro(e1.toString(), ((int) a)+1); Verificador.verificarVariavelInteiro(e2.toString(), ((int) a)+1); } RESULT = new String("il"); :} |
+    expression:e1 BARRA:d expression:e2 {: if (e1 != null && e2 != null ){ GeracaoCodigo.getInstance().divisao(); Verificador.verificarVariavelInteiro(e1.toString(), ((int) d)+1); Verificador.verificarVariavelInteiro(e2.toString(), ((int) d)+1); } RESULT = new String("il"); :} |
+    expression PERCENT expression {: RESULT = new String("ns"); :} |  
+    expression PIPE expression {: RESULT = new String("ns"); :} |
+    expression ECOMERCIAL expression {: RESULT = new String("ns"); :} |
+    expression:e1 expression_equality_operator:eeo expression:e2 {: if (e1 != null && e2 != null ){ GeracaoCodigo.getInstance().expressaoFor(); Verificador.verificarIgualdade(e1.toString(), e2.toString(), ((int) eeo)+1); } RESULT = new String("bo"); :} |
+    expression:e1 expression_relational_operator:ero expression:e2 {: if (e1 != null && e2 != null ){ GeracaoCodigo.getInstance().expressaoFor(); Verificador.verificarRelacao(e1.toString(), e2.toString(), ((int) ero)+1); } RESULT = new String("bo"); :} |
+    expression expression_shift_operator expression {: RESULT = new String("ns"); :} |
+    expression:e1 MAIS:m expression:e2 {: if (e1 != null && e2 != null ){ GeracaoCodigo.getInstance().soma(); Verificador.verificarVariavelInteiro(e1.toString(), ((int) m)+1); Verificador.verificarVariavelInteiro(e2.toString(), ((int) m)+1); } RESULT = new String("il"); :} |
+    expression:e1 MENOS:m expression:e2 {: if (e1 != null && e2 != null ){ GeracaoCodigo.getInstance().subtracao(); Verificador.verificarVariavelInteiro(e1.toString(), ((int) m)+1); Verificador.verificarVariavelInteiro(e2.toString(), ((int) m)+1); } RESULT = new String("il"); :} |
+    unary_expression:ue {: RESULT = ue; :} |
+    unary_expression assignment_operator expression ;
 
 
 expression ::= 
@@ -290,17 +372,17 @@ constant_declarator ::= identifier IGUAL expression;
 embedded_statement ::= maybe_empty_block | statement_expression PONTOEVIRGULA | selection_statement | iteration_statement | jump_statement | try_statement | CHECKED block | UNCHECKED block | lock_statement | using_statement;
 statement_expression ::=  primary_expression:pe {: if (pe != null) { Verificador.verificarMetodo(pe.toString()); } :} | NEW type LPAREN argument_list RPAREN | unary_expression:ue {: GeracaoCodigo.getInstance().iniciaAtribuicao(); :} assignment_operator:ao expression:e {: if (ue != null && e != null){ GeracaoCodigo.getInstance().atribuicao(ue.toString());  Verificador.verificaAtribuicao(ue.toString(), e.toString(), ((int) ao)+1); } :} | primary_expression increment_decrement | increment_decrement primary_expression;
 selection_statement ::= if_statement | switch_statement;
-if_statement ::= IF LPAREN expression RPAREN embedded_statement else_part_opt;
+if_statement ::= IF LPAREN expression_iteration RPAREN embedded_statement else_part_opt;
 else_part_opt ::= | else_part;
 else_part ::= ELSE embedded_statement;
-switch_statement ::= SWITCH LPAREN expression RPAREN LCHAVE switch_section_aux RCHAVE;
+switch_statement ::= SWITCH LPAREN expression_iteration RPAREN LCHAVE switch_section_aux RCHAVE;
 switch_section_aux ::= | switch_section switch_section_aux;
 switch_section ::= switch_label_aux statement_mais;
 switch_label_aux ::= switch_label | switch_label switch_label_aux;
 statement_mais ::= statement | statement statement_mais;
 switch_label ::= CASE expression DOISPONTOS | DEFAULT DOISPONTOS;
 iteration_statement ::= while_statement| do_statement | for_statement | foreach_statement;
-while_statement ::= WHILE LPAREN expression RPAREN embedded_statement;
+while_statement ::= WHILE LPAREN expression_iteration RPAREN embedded_statement;
 do_statement ::= DO embedded_statement WHILE LPAREN expression RPAREN PONTOEVIRGULA;
 for_statement ::= FOR:f {: GeracaoCodigo.getInstance().iniciaFor(); :} LPAREN for_initializer PONTOEVIRGULA {: GeracaoCodigo.getInstance().exp(); :} expression_opt:eo PONTOEVIRGULA statement_expression_list_opt RPAREN {: GeracaoCodigo.getInstance().loopFor(); :} embedded_statement {: if (eo != null){ GeracaoCodigo.getInstance().finalizaFor(); Verificador.verificarFor(eo.toString(), ((int) f)+1); } :};
 for_initializer ::= | local_variable_declaration | statement_expression_list;

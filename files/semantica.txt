@@ -8,7 +8,7 @@ class apartamento : imovel {
 class casa : imovel{
 	int y;
 	
-	public string novoMetodo(string b, int c){
+	public void novoMetodo(string b, int c){
 		y = 3;
 	}
 }
@@ -19,6 +19,7 @@ class teste {
 
 	public string novoMetodo(string b, int c){
 		y = 3;
+		return "";
 	}
 	
 	string a;
@@ -30,6 +31,7 @@ class teste {
 		int r = 2 + 2;
 		c = new apartamento();
 		p = new imovel();
+		return 0;
 	}
 	
 	public void metodo(){
@@ -47,14 +49,11 @@ class teste {
 		bool j = 5 > 4;
 		bool h = a == "ss";
 		
-		for (int g = 5; bo; a = "ssd") {
+		for (int g = 5; g < 100; g++) {
 			string t = "teste";
 		}
 		
 		novoMetodo("sdsd", polimorfismo());
-		a = novoMetodo("sdsd", polimorfismo());
+		string g = novoMetodo("sdsd", polimorfismo());
 	}
 }
-
-//verificar se ja existe
-//testar int b = k;
